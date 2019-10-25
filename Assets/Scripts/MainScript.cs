@@ -36,6 +36,7 @@ public class MainScript : MonoBehaviour {
 	private int CanvasState = 0;
 	private Dictionary<int, GameObject> CanvasDictionary = new Dictionary<int, GameObject>();
 
+	private CommunicationManager cm;
 
 	// Start is called before the first frame update
 	void Start() {
@@ -91,6 +92,8 @@ public class MainScript : MonoBehaviour {
 		VehicleCanvas.SetActive(false);
 		RightArmCanvas.SetActive(false);
 		LeftArmCanvas.SetActive(false);
+
+		cm = GameObject.Find("Communication Manager").GetComponent<CommunicationManager>();
 	}
 
 
@@ -107,24 +110,76 @@ public class MainScript : MonoBehaviour {
 	 * キャンバス切り替え
 	 **************************************************/
 	void ChangeToInfo() {
+		IEnumerator coroutine = WaitForChangeToInfo();
+		StartCoroutine(coroutine);
+		/*
+		CanvasDictionary[CanvasState].SetActive(false);
+		InfoCanvas.SetActive(true);
+		CanvasState = 0;
+		*/
+	}
+
+	void ChangeToVehicle() {
+		IEnumerator coroutine = WaitForChangeToVehicle();
+		StartCoroutine(coroutine);
+		/*
+		CanvasDictionary[CanvasState].SetActive(false);
+		VehicleCanvas.SetActive(true);
+		CanvasState = 1;
+		*/
+	}
+
+	void ChangeToRightArm() {
+		IEnumerator coroutine = WaitForChangeToRightArm();
+		StartCoroutine(coroutine);
+		/*
+		CanvasDictionary[CanvasState].SetActive(false);
+		RightArmCanvas.SetActive(true);
+		CanvasState = 2;
+		*/
+	}
+
+	void ChangeToLeftArm() {
+		IEnumerator coroutine = WaitForChangeToLeftArm();
+		StartCoroutine(coroutine);
+		/*
+		CanvasDictionary[CanvasState].SetActive(false);
+		LeftArmCanvas.SetActive(true);
+		CanvasState = 3;
+		*/
+	}
+
+	IEnumerator WaitForChangeToInfo() {
+		while (cm.CheckWaitAnything()) {
+			yield return null;
+		}
 		CanvasDictionary[CanvasState].SetActive(false);
 		InfoCanvas.SetActive(true);
 		CanvasState = 0;
 	}
 
-	void ChangeToVehicle() {
+	IEnumerator WaitForChangeToVehicle() {
+		while (cm.CheckWaitAnything()) {
+			yield return null;
+		}
 		CanvasDictionary[CanvasState].SetActive(false);
 		VehicleCanvas.SetActive(true);
 		CanvasState = 1;
 	}
 
-	void ChangeToRightArm() {
+	IEnumerator WaitForChangeToRightArm() {
+		while (cm.CheckWaitAnything()) {
+			yield return null;
+		}
 		CanvasDictionary[CanvasState].SetActive(false);
 		RightArmCanvas.SetActive(true);
 		CanvasState = 2;
 	}
 
-	void ChangeToLeftArm() {
+	IEnumerator WaitForChangeToLeftArm() {
+		while (cm.CheckWaitAnything()) {
+			yield return null;
+		}
 		CanvasDictionary[CanvasState].SetActive(false);
 		LeftArmCanvas.SetActive(true);
 		CanvasState = 3;
