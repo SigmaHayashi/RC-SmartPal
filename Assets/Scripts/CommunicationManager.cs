@@ -70,6 +70,9 @@ public class CommunicationManager : MonoBehaviour {
 	private bool wait_LeftArmState = false;
 	private bool wait_LeftArmPos = false;
 
+	private bool wait_VehicleStop = false;
+	private bool wait_VehicleMove = false;
+
 
 	// Start is called before the first frame update
 	void Start() {
@@ -120,6 +123,13 @@ public class CommunicationManager : MonoBehaviour {
 				}
 				if (wait_LeftArmPos) {
 					WaitResponce(0.5f);
+				}
+
+				if (wait_VehicleStop) {
+					WaitResponce(1.0f);
+				}
+				if (wait_VehicleMove) {
+					WaitResponce(1.0f);
 				}
 			}
 		}
@@ -441,4 +451,58 @@ public class CommunicationManager : MonoBehaviour {
 	public bool CheckWaitLeftArmPos() {
 		return wait_LeftArmPos;
 	}
+
+	/**************************************************
+	 * Vehicle Stop
+	 **************************************************/
+	public IEnumerator VehicleStop() {
+		wait_anything = access_db = wait_VehicleStop = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[0];
+		Req_sp5_control srvReq = new Req_sp5_control(1, 6, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_VehicleStop = false;
+	}
+
+	public bool CheckWaitVehicleStop() {
+		return wait_VehicleStop;
+	}
+
+	/**************************************************
+	 * Vehicle Move
+	 **************************************************/
+	public IEnumerator VehicleMove(float x_m, float y_m, float theta_rad) {
+		wait_anything = access_db = wait_VehicleMove = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[3] { x_m, y_m, theta_rad };
+		Debug.Log("SendMessage arg: " + x_m.ToString() + ", " + y_m.ToString() + ", " + theta_rad.ToString());
+		Req_sp5_control srvReq = new Req_sp5_control(1, 16, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_VehicleMove = false;
+	}
+
+	public bool CheckWaitVehicleMove() {
+		return wait_VehicleMove;
+	}
+
 }

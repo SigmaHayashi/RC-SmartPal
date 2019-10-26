@@ -18,6 +18,20 @@ public class VehicleCanvasManager : MonoBehaviour {
 
 	private Button Vehicle_Stop_Button;
 
+	//Communication Manager
+	private CommunicationManager cm;
+
+	//更新するタイミング用
+	private float time_vehicle_state = 0.0f;
+
+	//どのボタンを押しているか
+	private bool push_forward = false;
+	private bool push_back = false;
+	private bool push_right = false;
+	private bool push_left = false;
+	private bool push_turnright = false;
+	private bool push_turnleft = false;
+
 	// Start is called before the first frame update
 	void Start() {
 		Vehicle_State_Text = GameObject.Find("Main System/Vehicle Canvas/Vehicle State Text").GetComponent<Text>();
@@ -39,6 +53,8 @@ public class VehicleCanvasManager : MonoBehaviour {
 		SettingButton(Vehicle_TurnLeft_Button);
 
 		Vehicle_Stop_Button.onClick.AddListener(PushStop);
+
+		cm = GameObject.Find("Communication Manager").GetComponent<CommunicationManager>();
 	}
 
 	void SettingButton(Button button) {
@@ -49,16 +65,64 @@ public class VehicleCanvasManager : MonoBehaviour {
 		entry_up.eventID = EventTriggerType.PointerUp;
 		switch (button.name.ToString()) {
 			case "Forward Button":
+				entry_down.callback.AddListener((x) => {
+					push_forward = true;
+					SendCommand();
+				});
+				entry_up.callback.AddListener((x) => {
+					push_forward = false;
+					SendCommand();
+				});
 				break;
 			case "Back Button":
+				entry_down.callback.AddListener((x) => {
+					push_back = true;
+					SendCommand();
+				});
+				entry_up.callback.AddListener((x) => {
+					push_back = false;
+					SendCommand();
+				});
 				break;
 			case "Right Button":
+				entry_down.callback.AddListener((x) => {
+					push_right = true;
+					SendCommand();
+				});
+				entry_up.callback.AddListener((x) => {
+					push_right = false;
+					SendCommand();
+				});
 				break;
 			case "Left Button":
+				entry_down.callback.AddListener((x) => {
+					push_left = true;
+					SendCommand();
+				});
+				entry_up.callback.AddListener((x) => {
+					push_left = false;
+					SendCommand();
+				});
 				break;
 			case "Turn Right Button":
+				entry_down.callback.AddListener((x) => {
+					push_turnright = true;
+					SendCommand();
+				});
+				entry_up.callback.AddListener((x) => {
+					push_turnright = false;
+					SendCommand();
+				});
 				break;
 			case "Turn Left Button":
+				entry_down.callback.AddListener((x) => {
+					push_turnleft = true;
+					SendCommand();
+				});
+				entry_up.callback.AddListener((x) => {
+					push_turnleft = false;
+					SendCommand();
+				});
 				break;
 		}
 		trigger.triggers.Add(entry_down);
@@ -67,10 +131,316 @@ public class VehicleCanvasManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update() {
+		//Vehicle周りの情報取得
+		time_vehicle_state += Time.deltaTime;
+		if (!cm.CheckWaitAnything() && time_vehicle_state > 0.5f) {
+			time_vehicle_state = 0.0f;
+			IEnumerator coroutine = cm.ReadVehicleState();
+			StartCoroutine(coroutine);
+		}
+		if (cm.CheckWaitVehicleState()) {
+			if (cm.CheckAbort()) {
+				cm.FinishAccess();
+			}
+			if (cm.CheckSuccess()) {
+				Res_sp5_control responce = cm.GetResponce();
+				cm.FinishAccess();
 
+				switch (responce.values.result) {
+					case 16:
+						Vehicle_State_Text.text = "State: Ready";
+						break;
+					case 17:
+						Vehicle_State_Text.text = "State: Busy";
+						break;
+					case 19:
+						Vehicle_State_Text.text = "State: Alarm";
+						break;
+					case 20:
+						Vehicle_State_Text.text = "State: Stuck";
+						break;
+					case 21:
+						Vehicle_State_Text.text = "State: Paused";
+						break;
+					case 23:
+						Vehicle_State_Text.text = "State: Locked";
+						break;
+					case 24:
+						Vehicle_State_Text.text = "State: Powered";
+						break;
+					case 25:
+						Vehicle_State_Text.text = "State: Unpowered";
+						break;
+					case 26:
+						Vehicle_State_Text.text = "State: Caution";
+						break;
+					default:
+						Vehicle_State_Text.text = "State: Unknown State";
+						break;
+				}
+			}
+		}
+	}
+
+	void SendCommand() {
+		//単押し
+		if(!push_forward && !push_back && !push_right && !push_left && !push_turnright && !push_turnleft) {
+			IEnumerator coroutine = SendStop();
+			StartCoroutine(coroutine);
+		}
+		else if (push_forward && !push_back && !push_right && !push_left && !push_turnright && !push_turnleft) {
+			IEnumerator coroutine = SendMove(10, 0, 0);
+			StartCoroutine(coroutine);
+		}
+		else if (!push_forward && push_back && !push_right && !push_left && !push_turnright && !push_turnleft) {
+			IEnumerator coroutine = SendMove(-10, 0, 0);
+			StartCoroutine(coroutine);
+		}
+		else if (!push_forward && !push_back && push_right && !push_left && !push_turnright && !push_turnleft) {
+			IEnumerator coroutine = SendMove(0, -10, 0);
+			StartCoroutine(coroutine);
+		}
+		else if (!push_forward && !push_back && !push_right && push_left && !push_turnright && !push_turnleft) {
+			IEnumerator coroutine = SendMove(0, 10, 0);
+			StartCoroutine(coroutine);
+		}
+		else if (!push_forward && !push_back && !push_right && !push_left && push_turnright && !push_turnleft) {
+			IEnumerator coroutine = SendMove(0, 0, -10);
+			StartCoroutine(coroutine);
+		}
+		else if (!push_forward && !push_back && !push_right && !push_left && !push_turnright && push_turnleft) {
+			IEnumerator coroutine = SendMove(0, 0, 10);
+			StartCoroutine(coroutine);
+		}
+
+		//2個押し
+		else if (push_forward && push_back && !push_right && !push_left && !push_turnright && !push_turnleft) {
+
+		}
+		else if (push_forward && !push_back && push_right && !push_left && !push_turnright && !push_turnleft) {
+
+		}
+		else if (push_forward && !push_back && !push_right && push_left && !push_turnright && !push_turnleft) {
+
+		}
+		else if (push_forward && !push_back && !push_right && !push_left && push_turnright && !push_turnleft) {
+
+		}
+		else if (push_forward && !push_back && !push_right && !push_left && !push_turnright && push_turnleft) {
+
+		}
+
+		else if (!push_forward && push_back && push_right && !push_left && !push_turnright && !push_turnleft) {
+
+		}
+		else if (!push_forward && push_back && !push_right && push_left && !push_turnright && !push_turnleft) {
+
+		}
+		else if (!push_forward && push_back && !push_right && !push_left && push_turnright && !push_turnleft) {
+
+		}
+		else if (!push_forward && push_back && !push_right && !push_left && !push_turnright && push_turnleft) {
+
+		}
+
+		else if (!push_forward && !push_back && push_right && push_left && !push_turnright && !push_turnleft) {
+
+		}
+		else if (!push_forward && !push_back && push_right && !push_left && push_turnright && !push_turnleft) {
+
+		}
+		else if (!push_forward && !push_back && push_right && !push_left && !push_turnright && push_turnleft) {
+
+		}
+
+		else if (!push_forward && !push_back && !push_right && push_left && push_turnright && !push_turnleft) {
+
+		}
+		else if (!push_forward && !push_back && !push_right && push_left && !push_turnright && push_turnleft) {
+
+		}
+
+		else if (!push_forward && !push_back && !push_right && !push_left && push_turnright && push_turnleft) {
+
+		}
+
+		//3個押し
+		else if (push_forward && push_back && push_right && !push_left && !push_turnright && !push_turnleft) {
+
+		}
+		else if (push_forward && push_back && !push_right && push_left && !push_turnright && !push_turnleft) {
+
+		}
+		else if (push_forward && push_back && !push_right && !push_left && push_turnright && !push_turnleft) {
+
+		}
+		else if (push_forward && push_back && !push_right && !push_left && !push_turnright && push_turnleft) {
+
+		}
+		else if (push_forward && !push_back && push_right && push_left && !push_turnright && !push_turnleft) {
+
+		}
+		else if (push_forward && !push_back && push_right && !push_left && push_turnright && !push_turnleft) {
+
+		}
+		else if (push_forward && !push_back && push_right && !push_left && !push_turnright && push_turnleft) {
+
+		}
+		else if (push_forward && !push_back && !push_right && push_left && push_turnright && !push_turnleft) {
+
+		}
+		else if (push_forward && !push_back && !push_right && push_left && !push_turnright && push_turnleft) {
+
+		}
+		else if (push_forward && !push_back && !push_right && !push_left && push_turnright && push_turnleft) {
+
+		}
+
+		else if (!push_forward && push_back && push_right && push_left && !push_turnright && !push_turnleft) {
+
+		}
+		else if (!push_forward && push_back && push_right && !push_left && push_turnright && !push_turnleft) {
+
+		}
+		else if (!push_forward && push_back && push_right && !push_left && !push_turnright && push_turnleft) {
+
+		}
+		else if (!push_forward && push_back && !push_right && push_left && push_turnright && !push_turnleft) {
+
+		}
+		else if (!push_forward && push_back && !push_right && push_left && !push_turnright && push_turnleft) {
+
+		}
+		else if (!push_forward && push_back && !push_right && !push_left && push_turnright && push_turnleft) {
+
+		}
+
+		else if (!push_forward && !push_back && push_right && push_left && push_turnright && !push_turnleft) {
+
+		}
+		else if (!push_forward && !push_back && push_right && push_left && !push_turnright && push_turnleft) {
+
+		}
+		else if (!push_forward && !push_back && push_right && !push_left && push_turnright && push_turnleft) {
+
+		}
+
+		else if (!push_forward && !push_back && !push_right && push_left && push_turnright && push_turnleft) {
+
+		}
+
+		//4個押し
+		else if (push_forward && push_back && push_right && push_left && !push_turnright && !push_turnleft) {
+
+		}
+		else if (push_forward && push_back && push_right && !push_left && push_turnright && !push_turnleft) {
+
+		}
+		else if (push_forward && push_back && push_right && !push_left && !push_turnright && push_turnleft) {
+
+		}
+		else if (push_forward && push_back && !push_right && push_left && push_turnright && !push_turnleft) {
+
+		}
+		else if (push_forward && push_back && !push_right && push_left && !push_turnright && push_turnleft) {
+
+		}
+		else if (push_forward && push_back && !push_right && !push_left && push_turnright && push_turnleft) {
+
+		}
+		else if (push_forward && !push_back && push_right && push_left && push_turnright && !push_turnleft) {
+
+		}
+		else if (push_forward && !push_back && push_right && push_left && !push_turnright && push_turnleft) {
+
+		}
+		else if (push_forward && !push_back && push_right && !push_left && push_turnright && push_turnleft) {
+
+		}
+		else if (push_forward && !push_back && !push_right && push_left && push_turnright && push_turnleft) {
+
+		}
+
+		else if (!push_forward && push_back && push_right && push_left && push_turnright && !push_turnleft) {
+
+		}
+		else if (!push_forward && push_back && push_right && push_left && !push_turnright && push_turnleft) {
+
+		}
+		else if (!push_forward && push_back && push_right && !push_left && push_turnright && push_turnleft) {
+
+		}
+		else if (!push_forward && push_back && !push_right && push_left && push_turnright && push_turnleft) {
+
+		}
+
+		else if (!push_forward && !push_back && push_right && push_left && push_turnright && push_turnleft) {
+
+		}
+
+		//5個押し
+		else if (push_forward && push_back && push_right && push_left && push_turnright && !push_turnleft) {
+
+		}
+		else if (push_forward && push_back && push_right && push_left && !push_turnright && push_turnleft) {
+
+		}
+		else if (push_forward && push_back && push_right && !push_left && push_turnright && push_turnleft) {
+
+		}
+		else if (push_forward && push_back && !push_right && push_left && push_turnright && push_turnleft) {
+
+		}
+		else if (push_forward && !push_back && push_right && push_left && push_turnright && push_turnleft) {
+
+		}
+		else if (!push_forward && push_back && push_right && push_left && push_turnright && push_turnleft) {
+
+		}
+
+		//6個押し
+		else if (push_forward && push_back && push_right && push_left && push_turnright && push_turnleft) {
+
+		}
 	}
 
 	void PushStop() {
-
+		IEnumerator coroutine = SendStop();
+		StartCoroutine(coroutine);
 	}
+
+	IEnumerator SendStop() {
+		while (cm.CheckWaitAnything()) {
+			yield return null;
+		}
+
+		IEnumerator coroutine = cm.VehicleStop();
+		StartCoroutine(coroutine);
+
+		while (cm.CheckWaitVehicleStop()) {
+			if (cm.CheckAbort() || cm.CheckSuccess()) {
+				cm.FinishAccess();
+			}
+			yield return null;
+		}
+	}
+
+	IEnumerator SendMove(float x_m, float y_m, float theta_rad) {
+		//Debug.Log("Move: " + x_m.ToString());
+		while (cm.CheckWaitAnything()) {
+			//Debug.Log("Waiting");
+			yield return null;
+		}
+
+		IEnumerator coroutine = cm.VehicleMove(x_m, y_m, theta_rad);
+		StartCoroutine(coroutine);
+
+		while (cm.CheckWaitVehicleMove()) {
+			if (cm.CheckAbort() || cm.CheckSuccess()) {
+				cm.FinishAccess();
+			}
+			yield return null;
+		}
+	}
+
 }
