@@ -67,61 +67,61 @@ public class VehicleCanvasManager : MonoBehaviour {
 			case "Forward Button":
 				entry_down.callback.AddListener((x) => {
 					push_forward = true;
-					SendCommand();
+					MakeCommand();
 				});
 				entry_up.callback.AddListener((x) => {
 					push_forward = false;
-					SendCommand();
+					MakeCommand();
 				});
 				break;
 			case "Back Button":
 				entry_down.callback.AddListener((x) => {
 					push_back = true;
-					SendCommand();
+					MakeCommand();
 				});
 				entry_up.callback.AddListener((x) => {
 					push_back = false;
-					SendCommand();
+					MakeCommand();
 				});
 				break;
 			case "Right Button":
 				entry_down.callback.AddListener((x) => {
 					push_right = true;
-					SendCommand();
+					MakeCommand();
 				});
 				entry_up.callback.AddListener((x) => {
 					push_right = false;
-					SendCommand();
+					MakeCommand();
 				});
 				break;
 			case "Left Button":
 				entry_down.callback.AddListener((x) => {
 					push_left = true;
-					SendCommand();
+					MakeCommand();
 				});
 				entry_up.callback.AddListener((x) => {
 					push_left = false;
-					SendCommand();
+					MakeCommand();
 				});
 				break;
 			case "Turn Right Button":
 				entry_down.callback.AddListener((x) => {
 					push_turnright = true;
-					SendCommand();
+					MakeCommand();
 				});
 				entry_up.callback.AddListener((x) => {
 					push_turnright = false;
-					SendCommand();
+					MakeCommand();
 				});
 				break;
 			case "Turn Left Button":
 				entry_down.callback.AddListener((x) => {
 					push_turnleft = true;
-					SendCommand();
+					MakeCommand();
 				});
 				entry_up.callback.AddListener((x) => {
 					push_turnleft = false;
-					SendCommand();
+					MakeCommand();
 				});
 				break;
 		}
@@ -182,225 +182,137 @@ public class VehicleCanvasManager : MonoBehaviour {
 		}
 	}
 
-	void SendCommand() {
+	void MakeCommand() {
 		//単押し
 		if(!push_forward && !push_back && !push_right && !push_left && !push_turnright && !push_turnleft) {
 			IEnumerator coroutine = SendStop();
 			StartCoroutine(coroutine);
 		}
 		else if (push_forward && !push_back && !push_right && !push_left && !push_turnright && !push_turnleft) {
-			IEnumerator coroutine = SendMove(10, 0, 0);
+			IEnumerator coroutine = SendStop();
 			StartCoroutine(coroutine);
+			IEnumerator coroutine2 = SendMove(10, 0, 0);
+			StartCoroutine(coroutine2);
 		}
 		else if (!push_forward && push_back && !push_right && !push_left && !push_turnright && !push_turnleft) {
-			IEnumerator coroutine = SendMove(-10, 0, 0);
+			IEnumerator coroutine = SendStop();
 			StartCoroutine(coroutine);
+			IEnumerator coroutine2 = SendMove(-10, 0, 0);
+			StartCoroutine(coroutine2);
 		}
 		else if (!push_forward && !push_back && push_right && !push_left && !push_turnright && !push_turnleft) {
-			IEnumerator coroutine = SendMove(0, -10, 0);
+			IEnumerator coroutine = SendStop();
 			StartCoroutine(coroutine);
+			IEnumerator coroutine2 = SendMove(0, -10, 0);
+			StartCoroutine(coroutine2);
 		}
 		else if (!push_forward && !push_back && !push_right && push_left && !push_turnright && !push_turnleft) {
-			IEnumerator coroutine = SendMove(0, 10, 0);
+			IEnumerator coroutine = SendStop();
 			StartCoroutine(coroutine);
+			IEnumerator coroutine2 = SendMove(0, 10, 0);
+			StartCoroutine(coroutine2);
 		}
 		else if (!push_forward && !push_back && !push_right && !push_left && push_turnright && !push_turnleft) {
-			IEnumerator coroutine = SendMove(0, 0, -10);
+			IEnumerator coroutine = SendStop();
 			StartCoroutine(coroutine);
+			IEnumerator coroutine2 = SendMove(0, 0, -10);
+			StartCoroutine(coroutine2);
 		}
 		else if (!push_forward && !push_back && !push_right && !push_left && !push_turnright && push_turnleft) {
-			IEnumerator coroutine = SendMove(0, 0, 10);
+			IEnumerator coroutine = SendStop();
 			StartCoroutine(coroutine);
+			IEnumerator coroutine2 = SendMove(0, 0, 10);
+			StartCoroutine(coroutine2);
 		}
 
 		//2個押し
 		else if (push_forward && push_back && !push_right && !push_left && !push_turnright && !push_turnleft) {
-
+			IEnumerator coroutine = SendStop();
+			StartCoroutine(coroutine);
 		}
 		else if (push_forward && !push_back && push_right && !push_left && !push_turnright && !push_turnleft) {
-
+			IEnumerator coroutine = SendStop();
+			StartCoroutine(coroutine);
+			IEnumerator coroutine2 = SendMove(10, -10, 0);
+			StartCoroutine(coroutine2);
 		}
 		else if (push_forward && !push_back && !push_right && push_left && !push_turnright && !push_turnleft) {
-
+			IEnumerator coroutine = SendStop();
+			StartCoroutine(coroutine);
+			IEnumerator coroutine2 = SendMove(10, 10, 0);
+			StartCoroutine(coroutine2);
 		}
 		else if (push_forward && !push_back && !push_right && !push_left && push_turnright && !push_turnleft) {
-
+			IEnumerator coroutine = SendStop();
+			StartCoroutine(coroutine);
+			IEnumerator coroutine2 = SendMove(10, 0, -10);
+			StartCoroutine(coroutine2);
 		}
 		else if (push_forward && !push_back && !push_right && !push_left && !push_turnright && push_turnleft) {
-
+			IEnumerator coroutine = SendStop();
+			StartCoroutine(coroutine);
+			IEnumerator coroutine2 = SendMove(10, 0, 10);
+			StartCoroutine(coroutine2);
 		}
 
 		else if (!push_forward && push_back && push_right && !push_left && !push_turnright && !push_turnleft) {
-
+			IEnumerator coroutine = SendStop();
+			StartCoroutine(coroutine);
+			IEnumerator coroutine2 = SendMove(-10, -10, 0);
+			StartCoroutine(coroutine2);
 		}
 		else if (!push_forward && push_back && !push_right && push_left && !push_turnright && !push_turnleft) {
-
+			IEnumerator coroutine = SendStop();
+			StartCoroutine(coroutine);
+			IEnumerator coroutine2 = SendMove(-10, 10, 0);
+			StartCoroutine(coroutine2);
 		}
 		else if (!push_forward && push_back && !push_right && !push_left && push_turnright && !push_turnleft) {
-
+			IEnumerator coroutine = SendStop();
+			StartCoroutine(coroutine);
+			IEnumerator coroutine2 = SendMove(-10, 0, -10);
+			StartCoroutine(coroutine2);
 		}
 		else if (!push_forward && push_back && !push_right && !push_left && !push_turnright && push_turnleft) {
-
+			IEnumerator coroutine = SendStop();
+			StartCoroutine(coroutine);
+			IEnumerator coroutine2 = SendMove(-10, 0, 10);
+			StartCoroutine(coroutine2);
 		}
 
 		else if (!push_forward && !push_back && push_right && push_left && !push_turnright && !push_turnleft) {
-
+			IEnumerator coroutine = SendStop();
+			StartCoroutine(coroutine);
 		}
 		else if (!push_forward && !push_back && push_right && !push_left && push_turnright && !push_turnleft) {
-
+			IEnumerator coroutine = SendStop();
+			StartCoroutine(coroutine);
+			IEnumerator coroutine2 = SendMove(0, -10, -10);
+			StartCoroutine(coroutine2);
 		}
 		else if (!push_forward && !push_back && push_right && !push_left && !push_turnright && push_turnleft) {
-
+			IEnumerator coroutine = SendStop();
+			StartCoroutine(coroutine);
+			IEnumerator coroutine2 = SendMove(0, -10, 10);
+			StartCoroutine(coroutine2);
 		}
 
 		else if (!push_forward && !push_back && !push_right && push_left && push_turnright && !push_turnleft) {
-
+			IEnumerator coroutine = SendStop();
+			StartCoroutine(coroutine);
+			IEnumerator coroutine2 = SendMove(0, 10, -10);
+			StartCoroutine(coroutine2);
 		}
 		else if (!push_forward && !push_back && !push_right && push_left && !push_turnright && push_turnleft) {
-
+			IEnumerator coroutine = SendStop();
+			StartCoroutine(coroutine);
+			IEnumerator coroutine2 = SendMove(0, 10, 10);
+			StartCoroutine(coroutine2);
 		}
 
 		else if (!push_forward && !push_back && !push_right && !push_left && push_turnright && push_turnleft) {
-
-		}
-
-		//3個押し
-		else if (push_forward && push_back && push_right && !push_left && !push_turnright && !push_turnleft) {
-
-		}
-		else if (push_forward && push_back && !push_right && push_left && !push_turnright && !push_turnleft) {
-
-		}
-		else if (push_forward && push_back && !push_right && !push_left && push_turnright && !push_turnleft) {
-
-		}
-		else if (push_forward && push_back && !push_right && !push_left && !push_turnright && push_turnleft) {
-
-		}
-		else if (push_forward && !push_back && push_right && push_left && !push_turnright && !push_turnleft) {
-
-		}
-		else if (push_forward && !push_back && push_right && !push_left && push_turnright && !push_turnleft) {
-
-		}
-		else if (push_forward && !push_back && push_right && !push_left && !push_turnright && push_turnleft) {
-
-		}
-		else if (push_forward && !push_back && !push_right && push_left && push_turnright && !push_turnleft) {
-
-		}
-		else if (push_forward && !push_back && !push_right && push_left && !push_turnright && push_turnleft) {
-
-		}
-		else if (push_forward && !push_back && !push_right && !push_left && push_turnright && push_turnleft) {
-
-		}
-
-		else if (!push_forward && push_back && push_right && push_left && !push_turnright && !push_turnleft) {
-
-		}
-		else if (!push_forward && push_back && push_right && !push_left && push_turnright && !push_turnleft) {
-
-		}
-		else if (!push_forward && push_back && push_right && !push_left && !push_turnright && push_turnleft) {
-
-		}
-		else if (!push_forward && push_back && !push_right && push_left && push_turnright && !push_turnleft) {
-
-		}
-		else if (!push_forward && push_back && !push_right && push_left && !push_turnright && push_turnleft) {
-
-		}
-		else if (!push_forward && push_back && !push_right && !push_left && push_turnright && push_turnleft) {
-
-		}
-
-		else if (!push_forward && !push_back && push_right && push_left && push_turnright && !push_turnleft) {
-
-		}
-		else if (!push_forward && !push_back && push_right && push_left && !push_turnright && push_turnleft) {
-
-		}
-		else if (!push_forward && !push_back && push_right && !push_left && push_turnright && push_turnleft) {
-
-		}
-
-		else if (!push_forward && !push_back && !push_right && push_left && push_turnright && push_turnleft) {
-
-		}
-
-		//4個押し
-		else if (push_forward && push_back && push_right && push_left && !push_turnright && !push_turnleft) {
-
-		}
-		else if (push_forward && push_back && push_right && !push_left && push_turnright && !push_turnleft) {
-
-		}
-		else if (push_forward && push_back && push_right && !push_left && !push_turnright && push_turnleft) {
-
-		}
-		else if (push_forward && push_back && !push_right && push_left && push_turnright && !push_turnleft) {
-
-		}
-		else if (push_forward && push_back && !push_right && push_left && !push_turnright && push_turnleft) {
-
-		}
-		else if (push_forward && push_back && !push_right && !push_left && push_turnright && push_turnleft) {
-
-		}
-		else if (push_forward && !push_back && push_right && push_left && push_turnright && !push_turnleft) {
-
-		}
-		else if (push_forward && !push_back && push_right && push_left && !push_turnright && push_turnleft) {
-
-		}
-		else if (push_forward && !push_back && push_right && !push_left && push_turnright && push_turnleft) {
-
-		}
-		else if (push_forward && !push_back && !push_right && push_left && push_turnright && push_turnleft) {
-
-		}
-
-		else if (!push_forward && push_back && push_right && push_left && push_turnright && !push_turnleft) {
-
-		}
-		else if (!push_forward && push_back && push_right && push_left && !push_turnright && push_turnleft) {
-
-		}
-		else if (!push_forward && push_back && push_right && !push_left && push_turnright && push_turnleft) {
-
-		}
-		else if (!push_forward && push_back && !push_right && push_left && push_turnright && push_turnleft) {
-
-		}
-
-		else if (!push_forward && !push_back && push_right && push_left && push_turnright && push_turnleft) {
-
-		}
-
-		//5個押し
-		else if (push_forward && push_back && push_right && push_left && push_turnright && !push_turnleft) {
-
-		}
-		else if (push_forward && push_back && push_right && push_left && !push_turnright && push_turnleft) {
-
-		}
-		else if (push_forward && push_back && push_right && !push_left && push_turnright && push_turnleft) {
-
-		}
-		else if (push_forward && push_back && !push_right && push_left && push_turnright && push_turnleft) {
-
-		}
-		else if (push_forward && !push_back && push_right && push_left && push_turnright && push_turnleft) {
-
-		}
-		else if (!push_forward && push_back && push_right && push_left && push_turnright && push_turnleft) {
-
-		}
-
-		//6個押し
-		else if (push_forward && push_back && push_right && push_left && push_turnright && push_turnleft) {
-
+			IEnumerator coroutine = SendStop();
+			StartCoroutine(coroutine);
 		}
 	}
 

@@ -73,6 +73,14 @@ public class CommunicationManager : MonoBehaviour {
 	private bool wait_VehicleStop = false;
 	private bool wait_VehicleMove = false;
 
+	private bool wait_RightArmStop = false;
+	private bool wait_RightArmReset = false;
+	private bool wait_RightArmMove = false;
+
+	private bool wait_LeftArmStop = false;
+	private bool wait_LeftArmReset = false;
+	private bool wait_LeftArmMove = false;
+
 
 	// Start is called before the first frame update
 	void Start() {
@@ -92,6 +100,7 @@ public class CommunicationManager : MonoBehaviour {
 
 		if (wsc.conneciton_state == wscCONST.STATE_CONNECTED) { //接続時
 			if (!success_access || !abort_access) {
+				//Info
 				if (wait_VehicleState) {
 					WaitResponce(0.5f);
 				}
@@ -125,10 +134,33 @@ public class CommunicationManager : MonoBehaviour {
 					WaitResponce(0.5f);
 				}
 
+				//Vehicle
 				if (wait_VehicleStop) {
 					WaitResponce(1.0f);
 				}
 				if (wait_VehicleMove) {
+					WaitResponce(1.0f);
+				}
+
+				//Right Arm
+				if (wait_RightArmStop) {
+					WaitResponce(1.0f);
+				}
+				if (wait_RightArmReset) {
+					WaitResponce(1.0f);
+				}
+				if (wait_RightArmMove) {
+					WaitResponce(1.0f);
+				}
+
+				//Left Arm
+				if (wait_LeftArmStop) {
+					WaitResponce(1.0f);
+				}
+				if (wait_LeftArmReset) {
+					WaitResponce(1.0f);
+				}
+				if (wait_LeftArmMove) {
 					WaitResponce(1.0f);
 				}
 			}
@@ -503,6 +535,218 @@ public class CommunicationManager : MonoBehaviour {
 
 	public bool CheckWaitVehicleMove() {
 		return wait_VehicleMove;
+	}
+
+	/**************************************************
+	 * Right Arm Stop
+	 **************************************************/
+	public IEnumerator RightArmStop() {
+		wait_anything = access_db = wait_RightArmStop = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[0];
+		Req_sp5_control srvReq = new Req_sp5_control(2, 5, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_RightArmStop = false;
+	}
+
+	public bool CheckWaitRightArmStop() {
+		return wait_RightArmStop;
+	}
+
+	/**************************************************
+	 * Right Arm Reset
+	 **************************************************/
+	public IEnumerator RightArmReset() {
+		wait_anything = access_db = wait_RightArmReset = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[8];
+		arg[0] = 0;
+		arg[1] = -0.1f;
+		arg[2] = 0;
+		arg[3] = 0;
+		arg[4] = 0;
+		arg[5] = 0;
+		arg[6] = 0;
+		arg[7] = 0.2f;
+		string msg = "";
+		foreach (float n in arg) {
+			msg += n.ToString() + ", ";
+		}
+		msg = msg.Substring(0, msg.Length - 2);
+		Debug.Log("SendMessage arg: " + msg);
+		Req_sp5_control srvReq = new Req_sp5_control(2, 15, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_RightArmReset = false;
+	}
+
+	public bool CheckWaitRightArmReset() {
+		return wait_RightArmReset;
+	}
+
+	/**************************************************
+	 * Right Arm Move
+	 **************************************************/
+	public IEnumerator RightArmMove(float[] theta_rad) {
+		wait_anything = access_db = wait_RightArmMove = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[8];
+		arg[0] = theta_rad[0];
+		arg[1] = theta_rad[1];
+		arg[2] = theta_rad[2];
+		arg[3] = theta_rad[3];
+		arg[4] = theta_rad[4];
+		arg[5] = theta_rad[5];
+		arg[6] = theta_rad[6];
+		arg[7] = 0.15f;
+		string msg = "";
+		foreach(float n in arg) {
+			msg += n.ToString() + ", ";
+		}
+		msg = msg.Substring(0, msg.Length - 2);
+		Debug.Log("SendMessage arg: " + msg);
+		Req_sp5_control srvReq = new Req_sp5_control(2, 16, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_RightArmMove = false;
+	}
+
+	public bool CheckWaitRightArmMove() {
+		return wait_RightArmMove;
+	}
+
+	/**************************************************
+	 * Left Arm Stop
+	 **************************************************/
+	public IEnumerator LeftArmStop() {
+		wait_anything = access_db = wait_LeftArmStop = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[0];
+		Req_sp5_control srvReq = new Req_sp5_control(3, 5, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_LeftArmStop = false;
+	}
+
+	public bool CheckWaitLeftArmStop() {
+		return wait_LeftArmStop;
+	}
+
+	/**************************************************
+	 * Left Arm Reset
+	 **************************************************/
+	public IEnumerator LeftArmReset() {
+		wait_anything = access_db = wait_LeftArmReset = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[8];
+		arg[0] = 0;
+		arg[1] = -0.1f;
+		arg[2] = 0;
+		arg[3] = 0;
+		arg[4] = 0;
+		arg[5] = 0;
+		arg[6] = 0;
+		arg[7] = 0.2f;
+		string msg = "";
+		foreach (float n in arg) {
+			msg += n.ToString() + ", ";
+		}
+		msg = msg.Substring(0, msg.Length - 2);
+		Debug.Log("SendMessage arg: " + msg);
+		Req_sp5_control srvReq = new Req_sp5_control(3, 15, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_LeftArmReset = false;
+	}
+
+	public bool CheckWaitLeftArmReset() {
+		return wait_LeftArmReset;
+	}
+
+	/**************************************************
+	 * Left Arm Move
+	 **************************************************/
+	public IEnumerator LeftArmMove(float[] theta_rad) {
+		wait_anything = access_db = wait_LeftArmMove = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[8];
+		arg[0] = theta_rad[0];
+		arg[1] = theta_rad[1];
+		arg[2] = theta_rad[2];
+		arg[3] = theta_rad[3];
+		arg[4] = theta_rad[4];
+		arg[5] = theta_rad[5];
+		arg[6] = theta_rad[6];
+		arg[7] = 0.15f;
+		string msg = "";
+		foreach (float n in arg) {
+			msg += n.ToString() + ", ";
+		}
+		msg = msg.Substring(0, msg.Length - 2);
+		Debug.Log("SendMessage arg: " + msg);
+		Req_sp5_control srvReq = new Req_sp5_control(3, 16, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_LeftArmMove = false;
+	}
+
+	public bool CheckWaitLeftArmMove() {
+		return wait_LeftArmMove;
 	}
 
 }
