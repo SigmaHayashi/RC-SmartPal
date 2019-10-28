@@ -27,6 +27,7 @@ public class InfoCanvasManager : MonoBehaviour {
 
 	//Communication Manager
 	private CommunicationManager cm;
+	private AndroidRosSocketClient wsc;
 
 	//更新するタイミング用
 	private float time_vehicle_state = 0.0f;
@@ -62,10 +63,23 @@ public class InfoCanvasManager : MonoBehaviour {
 
 		//Communication Managerを取得
 		cm = GameObject.Find("Communication Manager").GetComponent<CommunicationManager>();
+		wsc = GameObject.Find("Android Ros Socket Client").GetComponent<AndroidRosSocketClient>();
 	}
 
 	// Update is called once per frame
 	void Update() {
+		switch (wsc.conneciton_state) {
+			case wscCONST.STATE_CONNECTED:
+				Information_Text.text = "System: Connected";
+				break;
+			case wscCONST.STATE_DISCONNECTED:
+				Information_Text.text = "System: Disconnected";
+				break;
+			case wscCONST.STATE_ERROR:
+				Information_Text.text = "System: Error";
+				break;
+		}
+
 		//Vehicle周りの情報取得
 		time_vehicle_state += Time.deltaTime;
 		if(!cm.CheckWaitAnything() && time_vehicle_state > 1.0f) {
