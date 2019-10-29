@@ -123,7 +123,7 @@ public class RightGripperCanvasManager : MonoBehaviour {
 				Res_sp5_control responce = cm.GetResponce();
 				cm.FinishAccess();
 
-				RightGripper_Pos_Text.text = "Joint: (" + responce.values.val[0].ToString("f2") + ")";
+				RightGripper_Pos_Text.text = "Joint: (" + (responce.values.val[0] * Mathf.Rad2Deg).ToString("f0") + ")";
 			}
 		}
 	}

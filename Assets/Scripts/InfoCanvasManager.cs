@@ -297,7 +297,8 @@ public class InfoCanvasManager : MonoBehaviour {
 
 				string val_string = "(";
 				foreach (float val in responce.values.val) {
-					val_string += val.ToString("f2") + ", ";
+					float val_tmp = val * Mathf.Rad2Deg;
+					val_string += val_tmp.ToString("f0") + ", ";
 				}
 				//Debug.Log(val_string.Length);
 				if (val_string.Length > 1) {
@@ -424,7 +425,8 @@ public class InfoCanvasManager : MonoBehaviour {
 
 				string val_string = "(";
 				foreach (float val in responce.values.val) {
-					val_string += val.ToString("f2") + ", ";
+					float val_tmp = val * Mathf.Rad2Deg;
+					val_string += val_tmp.ToString("f0") + ", ";
 				}
 				//Debug.Log(val_string.Length);
 				if (val_string.Length > 1) {
@@ -478,7 +480,7 @@ public class InfoCanvasManager : MonoBehaviour {
 				Res_sp5_control responce = cm.GetResponce();
 				cm.FinishAccess();
 
-				RightGripper_Pos_Text.text = "Joint: (" + responce.values.val[0].ToString("f2") + ")";
+				RightGripper_Pos_Text.text = "Joint: (" + (responce.values.val[0] * Mathf.Rad2Deg).ToString("f0") + ")";
 			}
 		}
 
@@ -525,7 +527,7 @@ public class InfoCanvasManager : MonoBehaviour {
 				Res_sp5_control responce = cm.GetResponce();
 				cm.FinishAccess();
 
-				LeftGripper_Pos_Text.text = "Joint: (" + responce.values.val[0].ToString("f2") + ")";
+				LeftGripper_Pos_Text.text = "Joint: (" + (responce.values.val[0]*Mathf.Rad2Deg).ToString("f0") + ")";
 			}
 		}
 	}

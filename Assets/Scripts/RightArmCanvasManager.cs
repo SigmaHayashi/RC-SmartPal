@@ -311,7 +311,8 @@ public class RightArmCanvasManager : MonoBehaviour {
 
 				string val_string = "(";
 				foreach (float val in responce.values.val) {
-					val_string += val.ToString("f2") + ", ";
+					float val_tmp = val * Mathf.Rad2Deg;
+					val_string += val_tmp.ToString("f0") + ", ";
 				}
 				//Debug.Log(val_string.Length);
 				if (val_string.Length > 1) {
