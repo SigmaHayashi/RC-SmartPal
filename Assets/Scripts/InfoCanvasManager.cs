@@ -9,9 +9,7 @@ public class InfoCanvasManager : MonoBehaviour {
 
 	//UIたち
 	private Text Information_Text;
-
-	private Text Vehicle_Power_Text;
-	private Text Vehicle_Servo_Text;
+	
 	private Text Vehicle_State_Text;
 	private Text Vehicle_Pos_Text;
 
@@ -19,11 +17,19 @@ public class InfoCanvasManager : MonoBehaviour {
 	private Text RightArm_Servo_Text;
 	private Text RightArm_State_Text;
 	private Text RightArm_Pos_Text;
+	private Button RightArm_ClearAlarm_Button;
 
 	private Text LeftArm_Power_Text;
 	private Text LeftArm_Servo_Text;
 	private Text LeftArm_State_Text;
 	private Text LeftArm_Pos_Text;
+	private Button LeftArm_ClearAlarm_Button;
+
+	private Text RightGripper_State_Text;
+	private Text RightGripper_Pos_Text;
+
+	private Text LeftGripper_State_Text;
+	private Text LeftGripper_Pos_Text;
 
 	//Communication Manager
 	private CommunicationManager cm;
@@ -32,22 +38,36 @@ public class InfoCanvasManager : MonoBehaviour {
 	//更新するタイミング用
 	private float time_vehicle_state = 0.0f;
 	private float time_vehicle_pos = 0.0f;
+
 	private float time_rightarm_power = 0.0f;
 	private float time_rightarm_servo = 0.0f;
 	private float time_rightarm_state = 0.0f;
 	private float time_rightarm_pos = 0.0f;
+
 	private float time_leftarm_power = 0.0f;
 	private float time_leftarm_servo = 0.0f;
 	private float time_leftarm_state = 0.0f;
 	private float time_leftarm_pos = 0.0f;
 
+	private float time_rightgripper_state = 0.0f;
+	private float time_rightgripper_pos = 0.0f;
+
+	private float time_leftgripper_state = 0.0f;
+	private float time_leftgripper_pos = 0.0f;
+
+	//StateがAlarmかどうか
+	/*
+	private bool alarm_rightarm = false;
+	private bool alarm_leftarm = false;
+	private bool alarm_rightgripper = false;
+	private bool alarm_leftgripper = false;
+	*/
+
 	// Start is called before the first frame update
 	void Start() {
 		//UIを取得
 		Information_Text = GameObject.Find("Main System/Info Canvas/Overall Information Text").GetComponent<Text>();
-
-		Vehicle_Power_Text = GameObject.Find("Main System/Info Canvas/Vehicle Power Text").GetComponent<Text>();
-		Vehicle_Servo_Text = GameObject.Find("Main System/Info Canvas/Vehicle Servo Text").GetComponent<Text>();
+		
 		Vehicle_State_Text = GameObject.Find("Main System/Info Canvas/Vehicle State Text").GetComponent<Text>();
 		Vehicle_Pos_Text = GameObject.Find("Main System/Info Canvas/Vehicle Pos Text").GetComponent<Text>();
 
@@ -55,11 +75,23 @@ public class InfoCanvasManager : MonoBehaviour {
 		RightArm_Servo_Text = GameObject.Find("Main System/Info Canvas/Right Arm Servo Text").GetComponent<Text>();
 		RightArm_State_Text = GameObject.Find("Main System/Info Canvas/Right Arm State Text").GetComponent<Text>();
 		RightArm_Pos_Text = GameObject.Find("Main System/Info Canvas/Right Arm Pos Text").GetComponent<Text>();
+		RightArm_ClearAlarm_Button = GameObject.Find("Main System/Info Canvas/Right Arm Clear Alarm Button").GetComponent<Button>();
+		RightArm_ClearAlarm_Button.onClick.AddListener(PushRightArmClearAlarm);
+		RightArm_ClearAlarm_Button.gameObject.SetActive(false);
 
 		LeftArm_Power_Text = GameObject.Find("Main System/Info Canvas/Left Arm Power Text").GetComponent<Text>();
 		LeftArm_Servo_Text = GameObject.Find("Main System/Info Canvas/Left Arm Servo Text").GetComponent<Text>();
 		LeftArm_State_Text = GameObject.Find("Main System/Info Canvas/Left Arm State Text").GetComponent<Text>();
 		LeftArm_Pos_Text = GameObject.Find("Main System/Info Canvas/Left Arm Pos Text").GetComponent<Text>();
+		LeftArm_ClearAlarm_Button = GameObject.Find("Main System/Info Canvas/Left Arm Clear Alarm Button").GetComponent<Button>();
+		LeftArm_ClearAlarm_Button.onClick.AddListener(PushLeftArmClearAlarm);
+		LeftArm_ClearAlarm_Button.gameObject.SetActive(false);
+
+		RightGripper_State_Text = GameObject.Find("Main System/Info Canvas/Right Gripper State Text").GetComponent<Text>();
+		RightGripper_Pos_Text = GameObject.Find("Main System/Info Canvas/Right Gripper Pos Text").GetComponent<Text>();
+
+		LeftGripper_State_Text = GameObject.Find("Main System/Info Canvas/Left Gripper State Text").GetComponent<Text>();
+		LeftGripper_Pos_Text = GameObject.Find("Main System/Info Canvas/Left Gripper Pos Text").GetComponent<Text>();
 
 		//Communication Managerを取得
 		cm = GameObject.Find("Communication Manager").GetComponent<CommunicationManager>();
@@ -151,7 +183,7 @@ public class InfoCanvasManager : MonoBehaviour {
 
 		//Right Arm周りの情報取得
 		time_rightarm_power += Time.deltaTime;
-		if(!cm.CheckWaitAnything() && time_rightarm_power > 1.0f) {
+		if(!cm.CheckWaitAnything() && time_rightarm_power > 3.0f) {
 			time_rightarm_power = 0.0f;
 			IEnumerator coroutine = cm.ReadRightArmPower();
 			StartCoroutine(coroutine);
@@ -174,7 +206,7 @@ public class InfoCanvasManager : MonoBehaviour {
 		}
 
 		time_rightarm_servo += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_rightarm_servo > 1.0f) {
+		if (!cm.CheckWaitAnything() && time_rightarm_servo > 3.0f) {
 			time_rightarm_servo = 0.0f;
 			IEnumerator coroutine = cm.ReadRightArmServo();
 			StartCoroutine(coroutine);
@@ -239,6 +271,13 @@ public class InfoCanvasManager : MonoBehaviour {
 						RightArm_State_Text.text = "State: Unknown State";
 						break;
 				}
+
+				if (responce.values.result == 21) {
+					RightArm_ClearAlarm_Button.gameObject.SetActive(true);
+				}
+				else {
+					RightArm_ClearAlarm_Button.gameObject.SetActive(false);
+				}
 			}
 		}
 
@@ -260,18 +299,18 @@ public class InfoCanvasManager : MonoBehaviour {
 				foreach (float val in responce.values.val) {
 					val_string += val.ToString("f2") + ", ";
 				}
-				Debug.Log(val_string.Length);
+				//Debug.Log(val_string.Length);
 				if (val_string.Length > 1) {
 					val_string = val_string.Substring(0, val_string.Length - 2);
 				}
 				val_string += ")";
-				RightArm_Pos_Text.text = "Pos: " + val_string;
+				RightArm_Pos_Text.text = "Joint: " + val_string;
 			}
 		}
 
 		//Left Arm周りの情報取得
 		time_leftarm_power += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_leftarm_power > 1.0f) {
+		if (!cm.CheckWaitAnything() && time_leftarm_power > 3.0f) {
 			time_leftarm_power = 0.0f;
 			IEnumerator coroutine = cm.ReadLeftArmPower();
 			StartCoroutine(coroutine);
@@ -294,7 +333,7 @@ public class InfoCanvasManager : MonoBehaviour {
 		}
 
 		time_leftarm_servo += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_leftarm_servo > 1.0f) {
+		if (!cm.CheckWaitAnything() && time_leftarm_servo > 3.0f) {
 			time_leftarm_servo = 0.0f;
 			IEnumerator coroutine = cm.ReadLeftArmServo();
 			StartCoroutine(coroutine);
@@ -359,6 +398,13 @@ public class InfoCanvasManager : MonoBehaviour {
 						LeftArm_State_Text.text = "State: Unknown State";
 						break;
 				}
+
+				if (responce.values.result == 21) {
+					LeftArm_ClearAlarm_Button.gameObject.SetActive(true);
+				}
+				else {
+					LeftArm_ClearAlarm_Button.gameObject.SetActive(false);
+				}
 			}
 		}
 
@@ -380,13 +426,152 @@ public class InfoCanvasManager : MonoBehaviour {
 				foreach (float val in responce.values.val) {
 					val_string += val.ToString("f2") + ", ";
 				}
-				Debug.Log(val_string.Length);
+				//Debug.Log(val_string.Length);
 				if (val_string.Length > 1) {
 					val_string = val_string.Substring(0, val_string.Length - 2);
 				}
 				val_string += ")";
-				LeftArm_Pos_Text.text = "Pos: " + val_string;
+				LeftArm_Pos_Text.text = "Joint: " + val_string;
 			}
+		}
+
+		//Right Gripper周りの情報取得
+		time_rightgripper_state += Time.deltaTime;
+		if (!cm.CheckWaitAnything() && time_rightgripper_state > 1.0f) {
+			time_rightgripper_state = 0.0f;
+			IEnumerator coroutine = cm.ReadRightGripperState();
+			StartCoroutine(coroutine);
+		}
+		if (cm.CheckWaitRightGripperState()) {
+			if (cm.CheckAbort()) {
+				cm.FinishAccess();
+			}
+			if (cm.CheckSuccess()) {
+				Res_sp5_control responce = cm.GetResponce();
+				cm.FinishAccess();
+
+				switch (responce.values.result) {
+					case 0:
+						RightGripper_State_Text.text = "State: Not Moving";
+						break;
+					case 1:
+						RightGripper_State_Text.text = "State: Moving";
+						break;
+					default:
+						RightGripper_State_Text.text = "State: Unknown State";
+						break;
+				}
+			}
+		}
+
+		time_rightgripper_pos += Time.deltaTime;
+		if (!cm.CheckWaitAnything() && time_rightgripper_pos > 1.0f) {
+			time_rightgripper_pos = 0.0f;
+			IEnumerator coroutine = cm.ReadRightGripperPos();
+			StartCoroutine(coroutine);
+		}
+		if (cm.CheckWaitRightGripperPos()) {
+			if (cm.CheckAbort()) {
+				cm.FinishAccess();
+			}
+			if (cm.CheckSuccess()) {
+				Res_sp5_control responce = cm.GetResponce();
+				cm.FinishAccess();
+
+				RightGripper_Pos_Text.text = "Joint: (" + responce.values.val[0].ToString("f2") + ")";
+			}
+		}
+
+		//Left Gripper周りの情報取得
+		time_leftgripper_state += Time.deltaTime;
+		if (!cm.CheckWaitAnything() && time_leftgripper_state > 1.0f) {
+			time_leftgripper_state = 0.0f;
+			IEnumerator coroutine = cm.ReadLeftGripperState();
+			StartCoroutine(coroutine);
+		}
+		if (cm.CheckWaitLeftGripperState()) {
+			if (cm.CheckAbort()) {
+				cm.FinishAccess();
+			}
+			if (cm.CheckSuccess()) {
+				Res_sp5_control responce = cm.GetResponce();
+				cm.FinishAccess();
+
+				switch (responce.values.result) {
+					case 0:
+						LeftGripper_State_Text.text = "State: Not Moving";
+						break;
+					case 1:
+						LeftGripper_State_Text.text = "State: Moving";
+						break;
+					default:
+						LeftGripper_State_Text.text = "State: Unknown State";
+						break;
+				}
+			}
+		}
+
+		time_leftgripper_pos += Time.deltaTime;
+		if (!cm.CheckWaitAnything() && time_leftgripper_pos > 1.0f) {
+			time_leftgripper_pos = 0.0f;
+			IEnumerator coroutine = cm.ReadLeftGripperPos();
+			StartCoroutine(coroutine);
+		}
+		if (cm.CheckWaitLeftGripperPos()) {
+			if (cm.CheckAbort()) {
+				cm.FinishAccess();
+			}
+			if (cm.CheckSuccess()) {
+				Res_sp5_control responce = cm.GetResponce();
+				cm.FinishAccess();
+
+				LeftGripper_Pos_Text.text = "Joint: (" + responce.values.val[0].ToString("f2") + ")";
+			}
+		}
+	}
+
+	/**************************************************
+	 * Clear Alarm Buttonを押したとき
+	 **************************************************/
+	void PushRightArmClearAlarm() {
+		IEnumerator coroutine = SendRightArmClearAlarm();
+		StartCoroutine(coroutine);
+	}
+
+	IEnumerator SendRightArmClearAlarm() {
+		while (cm.CheckWaitAnything()) {
+			yield return null;
+		}
+
+		IEnumerator coroutine = cm.RightArmClearAlarm();
+		StartCoroutine(coroutine);
+
+		while (cm.CheckWaitRightArmClearAlarm()) {
+			if (cm.CheckAbort() || cm.CheckSuccess()) {
+				cm.FinishAccess();
+			}
+			yield return null;
+		}
+	}
+
+	void PushLeftArmClearAlarm() {
+		IEnumerator coroutine = SendLeftArmClearAlarm();
+		StartCoroutine(coroutine);
+	}
+
+	IEnumerator SendLeftArmClearAlarm() {
+		while (cm.CheckWaitAnything()) {
+			yield return null;
+		}
+
+		IEnumerator coroutine = cm.LeftArmClearAlarm();
+		StartCoroutine(coroutine);
+
+		while (cm.CheckWaitLeftArmClearAlarm()) {
+			if (cm.CheckAbort() || cm.CheckSuccess()) {
+				cm.FinishAccess();
+			}
+			yield return null;
 		}
 	}
 }

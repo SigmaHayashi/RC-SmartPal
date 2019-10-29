@@ -8,6 +8,7 @@ public class LeftArmCanvasManager : MonoBehaviour {
 
 	//UIたち
 	private Text LeftArm_State_Text;
+	private Text LeftArm_Pos_Text;
 
 	private Button LeftArm_J1Up_Button;
 	private Button LeftArm_J1Down_Button;
@@ -32,6 +33,7 @@ public class LeftArmCanvasManager : MonoBehaviour {
 
 	//更新するタイミング用
 	private float time_leftarm_state = 0.0f;
+	private float time_leftarm_pos = 0.0f;
 
 	//どのボタンを押しているか
 	private bool push_j1_up = false;
@@ -52,6 +54,7 @@ public class LeftArmCanvasManager : MonoBehaviour {
 	// Start is called before the first frame update
 	void Start() {
 		LeftArm_State_Text = GameObject.Find("Main System/Left Arm Canvas/Left Arm State Text").GetComponent<Text>();
+		LeftArm_Pos_Text = GameObject.Find("Main System/Left Arm Canvas/Left Arm Pos Text").GetComponent<Text>();
 
 		LeftArm_J1Up_Button = GameObject.Find("Main System/Left Arm Canvas/LJ1 up Button").GetComponent<Button>();
 		LeftArm_J1Down_Button = GameObject.Find("Main System/Left Arm Canvas/LJ1 down Button").GetComponent<Button>();
@@ -289,6 +292,33 @@ public class LeftArmCanvasManager : MonoBehaviour {
 						LeftArm_State_Text.text = "State: Unknown State";
 						break;
 				}
+			}
+		}
+
+		time_leftarm_pos += Time.deltaTime;
+		if (!cm.CheckWaitAnything() && time_leftarm_pos > 1.0f) {
+			time_leftarm_pos = 0.0f;
+			IEnumerator coroutine = cm.ReadLeftArmPos();
+			StartCoroutine(coroutine);
+		}
+		if (cm.CheckWaitLeftArmPos()) {
+			if (cm.CheckAbort()) {
+				cm.FinishAccess();
+			}
+			if (cm.CheckSuccess()) {
+				Res_sp5_control responce = cm.GetResponce();
+				cm.FinishAccess();
+
+				string val_string = "(";
+				foreach (float val in responce.values.val) {
+					val_string += val.ToString("f2") + ", ";
+				}
+				//Debug.Log(val_string.Length);
+				if (val_string.Length > 1) {
+					val_string = val_string.Substring(0, val_string.Length - 2);
+				}
+				val_string += ")";
+				LeftArm_Pos_Text.text = "Pos: " + val_string;
 			}
 		}
 	}

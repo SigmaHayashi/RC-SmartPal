@@ -61,25 +61,36 @@ public class CommunicationManager : MonoBehaviour {
 
 	private bool wait_VehicleState = false;
 	private bool wait_VehiclePos = false;
+	private bool wait_VehicleStop = false;
+	private bool wait_VehicleMove = false;
+
 	private bool wait_RightArmPower = false;
 	private bool wait_RightArmServo = false;
 	private bool wait_RightArmState = false;
 	private bool wait_RightArmPos = false;
+	private bool wait_RightArmStop = false;
+	private bool wait_RightArmReset = false;
+	private bool wait_RightArmMove = false;
+	private bool wait_RightArmClearAlarm = false;
+
 	private bool wait_LeftArmPower = false;
 	private bool wait_LeftArmServo = false;
 	private bool wait_LeftArmState = false;
 	private bool wait_LeftArmPos = false;
-
-	private bool wait_VehicleStop = false;
-	private bool wait_VehicleMove = false;
-
-	private bool wait_RightArmStop = false;
-	private bool wait_RightArmReset = false;
-	private bool wait_RightArmMove = false;
-
 	private bool wait_LeftArmStop = false;
 	private bool wait_LeftArmReset = false;
 	private bool wait_LeftArmMove = false;
+	private bool wait_LeftArmClearAlarm = false;
+
+	private bool wait_RightGripperState = false;
+	private bool wait_RightGripperPos = false;
+	private bool wait_RightGripperStop = false;
+	private bool wait_RightGripperMove = false;
+
+	private bool wait_LeftGripperState = false;
+	private bool wait_LeftGripperPos = false;
+	private bool wait_LeftGripperStop = false;
+	private bool wait_LeftGripperMove = false;
 
 
 	// Start is called before the first frame update
@@ -100,14 +111,21 @@ public class CommunicationManager : MonoBehaviour {
 
 		if (wsc.conneciton_state == wscCONST.STATE_CONNECTED) { //接続時
 			if (!success_access || !abort_access) {
-				//Info
+				//Vehicle
 				if (wait_VehicleState) {
 					WaitResponce(0.5f);
 				}
 				if (wait_VehiclePos) {
 					WaitResponce(0.5f);
 				}
+				if (wait_VehicleStop) {
+					WaitResponce(1.0f);
+				}
+				if (wait_VehicleMove) {
+					WaitResponce(1.0f);
+				}
 
+				//Right Arm
 				if (wait_RightArmPower) {
 					WaitResponce(0.5f);
 				}
@@ -120,7 +138,20 @@ public class CommunicationManager : MonoBehaviour {
 				if (wait_RightArmPos) {
 					WaitResponce(0.5f);
 				}
+				if (wait_RightArmStop) {
+					WaitResponce(1.0f);
+				}
+				if (wait_RightArmReset) {
+					WaitResponce(1.0f);
+				}
+				if (wait_RightArmMove) {
+					WaitResponce(1.0f);
+				}
+				if (wait_RightArmClearAlarm) {
+					WaitResponce(1.0f);
+				}
 
+				//Left Arm
 				if (wait_LeftArmPower) {
 					WaitResponce(0.5f);
 				}
@@ -133,27 +164,6 @@ public class CommunicationManager : MonoBehaviour {
 				if (wait_LeftArmPos) {
 					WaitResponce(0.5f);
 				}
-
-				//Vehicle
-				if (wait_VehicleStop) {
-					WaitResponce(1.0f);
-				}
-				if (wait_VehicleMove) {
-					WaitResponce(1.0f);
-				}
-
-				//Right Arm
-				if (wait_RightArmStop) {
-					WaitResponce(1.0f);
-				}
-				if (wait_RightArmReset) {
-					WaitResponce(1.0f);
-				}
-				if (wait_RightArmMove) {
-					WaitResponce(1.0f);
-				}
-
-				//Left Arm
 				if (wait_LeftArmStop) {
 					WaitResponce(1.0f);
 				}
@@ -161,6 +171,37 @@ public class CommunicationManager : MonoBehaviour {
 					WaitResponce(1.0f);
 				}
 				if (wait_LeftArmMove) {
+					WaitResponce(1.0f);
+				}
+				if (wait_LeftArmClearAlarm) {
+					WaitResponce(1.0f);
+				}
+
+				//Right Gripper
+				if (wait_RightGripperState) {
+					WaitResponce(0.5f);
+				}
+				if (wait_RightGripperPos) {
+					WaitResponce(0.5f);
+				}
+				if (wait_RightGripperStop) {
+					WaitResponce(1.0f);
+				}
+				if (wait_RightGripperMove) {
+					WaitResponce(1.0f);
+				}
+
+				//Left Gripper
+				if (wait_LeftGripperState) {
+					WaitResponce(0.5f);
+				}
+				if (wait_LeftGripperPos) {
+					WaitResponce(0.5f);
+				}
+				if (wait_LeftGripperStop) {
+					WaitResponce(1.0f);
+				}
+				if (wait_LeftGripperMove) {
 					WaitResponce(1.0f);
 				}
 			}
@@ -188,7 +229,7 @@ public class CommunicationManager : MonoBehaviour {
 			foreach (float val in responce.values.val) {
 				val_string += val.ToString() + ", ";
 			}
-			Debug.Log(val_string.Length);
+			//Debug.Log(val_string.Length);
 			if (val_string.Length > 1) {
 				val_string = val_string.Substring(0, val_string.Length - 2);
 			}
@@ -274,6 +315,59 @@ public class CommunicationManager : MonoBehaviour {
 
 	public bool CheckWaitVehiclePos() {
 		return wait_VehiclePos;
+	}
+
+	/**************************************************
+	 * Vehicle Stop
+	 **************************************************/
+	public IEnumerator VehicleStop() {
+		wait_anything = access_db = wait_VehicleStop = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[0];
+		Req_sp5_control srvReq = new Req_sp5_control(1, 6, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_VehicleStop = false;
+	}
+
+	public bool CheckWaitVehicleStop() {
+		return wait_VehicleStop;
+	}
+
+	/**************************************************
+	 * Vehicle Move
+	 **************************************************/
+	public IEnumerator VehicleMove(float x_m, float y_m, float theta_rad) {
+		wait_anything = access_db = wait_VehicleMove = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[3] { x_m, y_m, theta_rad };
+		Debug.Log("SendMessage arg: " + x_m.ToString() + ", " + y_m.ToString() + ", " + theta_rad.ToString());
+		Req_sp5_control srvReq = new Req_sp5_control(1, 16, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_VehicleMove = false;
+	}
+
+	public bool CheckWaitVehicleMove() {
+		return wait_VehicleMove;
 	}
 
 	/**************************************************
@@ -381,6 +475,138 @@ public class CommunicationManager : MonoBehaviour {
 	}
 
 	/**************************************************
+	 * Right Arm Stop
+	 **************************************************/
+	public IEnumerator RightArmStop() {
+		wait_anything = access_db = wait_RightArmStop = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[0];
+		Req_sp5_control srvReq = new Req_sp5_control(2, 5, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_RightArmStop = false;
+	}
+
+	public bool CheckWaitRightArmStop() {
+		return wait_RightArmStop;
+	}
+
+	/**************************************************
+	 * Right Arm Reset
+	 **************************************************/
+	public IEnumerator RightArmReset() {
+		wait_anything = access_db = wait_RightArmReset = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[8];
+		arg[0] = 0;
+		arg[1] = -0.1f;
+		arg[2] = 0;
+		arg[3] = 0;
+		arg[4] = 0;
+		arg[5] = 0;
+		arg[6] = 0;
+		arg[7] = 0.2f;
+		string msg = "";
+		foreach (float n in arg) {
+			msg += n.ToString() + ", ";
+		}
+		msg = msg.Substring(0, msg.Length - 2);
+		Debug.Log("SendMessage arg: " + msg);
+		Req_sp5_control srvReq = new Req_sp5_control(2, 15, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_RightArmReset = false;
+	}
+
+	public bool CheckWaitRightArmReset() {
+		return wait_RightArmReset;
+	}
+
+	/**************************************************
+	 * Right Arm Move
+	 **************************************************/
+	public IEnumerator RightArmMove(float[] theta_rad) {
+		wait_anything = access_db = wait_RightArmMove = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[8];
+		arg[0] = theta_rad[0];
+		arg[1] = theta_rad[1];
+		arg[2] = theta_rad[2];
+		arg[3] = theta_rad[3];
+		arg[4] = theta_rad[4];
+		arg[5] = theta_rad[5];
+		arg[6] = theta_rad[6];
+		arg[7] = 0.2f;
+		string msg = "";
+		foreach (float n in arg) {
+			msg += n.ToString() + ", ";
+		}
+		msg = msg.Substring(0, msg.Length - 2);
+		Debug.Log("SendMessage arg: " + msg);
+		Req_sp5_control srvReq = new Req_sp5_control(2, 16, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_RightArmMove = false;
+	}
+
+	public bool CheckWaitRightArmMove() {
+		return wait_RightArmMove;
+	}
+
+	/**************************************************
+	 * Right Arm Clear Alarm
+	 **************************************************/
+	public IEnumerator RightArmClearAlarm() {
+		wait_anything = access_db = wait_RightArmClearAlarm = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[0];
+		Req_sp5_control srvReq = new Req_sp5_control(2, 0, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_RightArmClearAlarm = false;
+	}
+
+	public bool CheckWaitRightArmClearAlarm() {
+		return wait_RightArmClearAlarm;
+	}
+
+	/**************************************************
 	 * Read Left Arm Power
 	 **************************************************/
 	public IEnumerator ReadLeftArmPower() {
@@ -485,165 +711,6 @@ public class CommunicationManager : MonoBehaviour {
 	}
 
 	/**************************************************
-	 * Vehicle Stop
-	 **************************************************/
-	public IEnumerator VehicleStop() {
-		wait_anything = access_db = wait_VehicleStop = true;
-		time_access = 0.0f;
-
-		float[] arg = new float[0];
-		Req_sp5_control srvReq = new Req_sp5_control(1, 6, arg);
-		ServiceCaller_sp5_control(srvReq);
-
-		while (access_db) {
-			yield return null;
-		}
-
-		while (success_access || abort_access) {
-			yield return null;
-		}
-
-		wait_anything = wait_VehicleStop = false;
-	}
-
-	public bool CheckWaitVehicleStop() {
-		return wait_VehicleStop;
-	}
-
-	/**************************************************
-	 * Vehicle Move
-	 **************************************************/
-	public IEnumerator VehicleMove(float x_m, float y_m, float theta_rad) {
-		wait_anything = access_db = wait_VehicleMove = true;
-		time_access = 0.0f;
-
-		float[] arg = new float[3] { x_m, y_m, theta_rad };
-		Debug.Log("SendMessage arg: " + x_m.ToString() + ", " + y_m.ToString() + ", " + theta_rad.ToString());
-		Req_sp5_control srvReq = new Req_sp5_control(1, 16, arg);
-		ServiceCaller_sp5_control(srvReq);
-
-		while (access_db) {
-			yield return null;
-		}
-
-		while (success_access || abort_access) {
-			yield return null;
-		}
-
-		wait_anything = wait_VehicleMove = false;
-	}
-
-	public bool CheckWaitVehicleMove() {
-		return wait_VehicleMove;
-	}
-
-	/**************************************************
-	 * Right Arm Stop
-	 **************************************************/
-	public IEnumerator RightArmStop() {
-		wait_anything = access_db = wait_RightArmStop = true;
-		time_access = 0.0f;
-
-		float[] arg = new float[0];
-		Req_sp5_control srvReq = new Req_sp5_control(2, 5, arg);
-		ServiceCaller_sp5_control(srvReq);
-
-		while (access_db) {
-			yield return null;
-		}
-
-		while (success_access || abort_access) {
-			yield return null;
-		}
-
-		wait_anything = wait_RightArmStop = false;
-	}
-
-	public bool CheckWaitRightArmStop() {
-		return wait_RightArmStop;
-	}
-
-	/**************************************************
-	 * Right Arm Reset
-	 **************************************************/
-	public IEnumerator RightArmReset() {
-		wait_anything = access_db = wait_RightArmReset = true;
-		time_access = 0.0f;
-
-		float[] arg = new float[8];
-		arg[0] = 0;
-		arg[1] = -0.1f;
-		arg[2] = 0;
-		arg[3] = 0;
-		arg[4] = 0;
-		arg[5] = 0;
-		arg[6] = 0;
-		arg[7] = 0.2f;
-		string msg = "";
-		foreach (float n in arg) {
-			msg += n.ToString() + ", ";
-		}
-		msg = msg.Substring(0, msg.Length - 2);
-		Debug.Log("SendMessage arg: " + msg);
-		Req_sp5_control srvReq = new Req_sp5_control(2, 15, arg);
-		ServiceCaller_sp5_control(srvReq);
-
-		while (access_db) {
-			yield return null;
-		}
-
-		while (success_access || abort_access) {
-			yield return null;
-		}
-
-		wait_anything = wait_RightArmReset = false;
-	}
-
-	public bool CheckWaitRightArmReset() {
-		return wait_RightArmReset;
-	}
-
-	/**************************************************
-	 * Right Arm Move
-	 **************************************************/
-	public IEnumerator RightArmMove(float[] theta_rad) {
-		wait_anything = access_db = wait_RightArmMove = true;
-		time_access = 0.0f;
-
-		float[] arg = new float[8];
-		arg[0] = theta_rad[0];
-		arg[1] = theta_rad[1];
-		arg[2] = theta_rad[2];
-		arg[3] = theta_rad[3];
-		arg[4] = theta_rad[4];
-		arg[5] = theta_rad[5];
-		arg[6] = theta_rad[6];
-		arg[7] = 0.15f;
-		string msg = "";
-		foreach(float n in arg) {
-			msg += n.ToString() + ", ";
-		}
-		msg = msg.Substring(0, msg.Length - 2);
-		Debug.Log("SendMessage arg: " + msg);
-		Req_sp5_control srvReq = new Req_sp5_control(2, 16, arg);
-		ServiceCaller_sp5_control(srvReq);
-
-		while (access_db) {
-			yield return null;
-		}
-
-		while (success_access || abort_access) {
-			yield return null;
-		}
-
-		wait_anything = wait_RightArmMove = false;
-	}
-
-	public bool CheckWaitRightArmMove() {
-		return wait_RightArmMove;
-	}
-
-	/**************************************************
 	 * Left Arm Stop
 	 **************************************************/
 	public IEnumerator LeftArmStop() {
@@ -724,7 +791,7 @@ public class CommunicationManager : MonoBehaviour {
 		arg[4] = theta_rad[4];
 		arg[5] = theta_rad[5];
 		arg[6] = theta_rad[6];
-		arg[7] = 0.15f;
+		arg[7] = 0.2f;
 		string msg = "";
 		foreach (float n in arg) {
 			msg += n.ToString() + ", ";
@@ -747,6 +814,246 @@ public class CommunicationManager : MonoBehaviour {
 
 	public bool CheckWaitLeftArmMove() {
 		return wait_LeftArmMove;
+	}
+
+	/**************************************************
+	 * Left Arm Clear Alarm
+	 **************************************************/
+	public IEnumerator LeftArmClearAlarm() {
+		wait_anything = access_db = wait_LeftArmClearAlarm = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[0];
+		Req_sp5_control srvReq = new Req_sp5_control(3, 0, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_LeftArmClearAlarm = false;
+	}
+
+	public bool CheckWaitLeftArmClearAlarm() {
+		return wait_LeftArmClearAlarm;
+	}
+
+	/**************************************************
+	 * Read Right Gripper State
+	 **************************************************/
+	public IEnumerator ReadRightGripperState() {
+		wait_anything = access_db = wait_RightGripperState = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[0] {};
+		Req_sp5_control srvReq = new Req_sp5_control(4, 7, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_RightGripperState = false;
+	}
+
+	public bool CheckWaitRightGripperState() {
+		return wait_RightGripperState;
+	}
+
+	/**************************************************
+	 * Read Right Gripper Pos
+	 **************************************************/
+	public IEnumerator ReadRightGripperPos() {
+		wait_anything = access_db = wait_RightGripperPos = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[0] { };
+		Req_sp5_control srvReq = new Req_sp5_control(4, 8, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_RightGripperPos = false;
+	}
+
+	public bool CheckWaitRightGripperPos() {
+		return wait_RightGripperPos;
+	}
+
+	/**************************************************
+	 * Right Gripper Stop
+	 **************************************************/
+	public IEnumerator RightGripperStop() {
+		wait_anything = access_db = wait_RightGripperStop = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[0] { };
+		Req_sp5_control srvReq = new Req_sp5_control(4, 5, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_RightGripperStop = false;
+	}
+
+	public bool CheckWaitRightGripperStop() {
+		return wait_RightGripperStop;
+	}
+
+	/**************************************************
+	 * Right Gripper Move
+	 **************************************************/
+	public IEnumerator RightGripperMove(float theta_rad) {
+		wait_anything = access_db = wait_RightGripperMove = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[3];
+		arg[0] = theta_rad;
+		arg[1] = 0.2f;
+		arg[2] = 0.2f;
+		Req_sp5_control srvReq = new Req_sp5_control(4, 15, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_RightGripperMove = false;
+	}
+
+	public bool CheckWaitRightGripperMove() {
+		return wait_RightGripperMove;
+	}
+
+	/**************************************************
+	 * Read Left Gripper State
+	 **************************************************/
+	public IEnumerator ReadLeftGripperState() {
+		wait_anything = access_db = wait_LeftGripperState = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[0] {};
+		Req_sp5_control srvReq = new Req_sp5_control(5, 7, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_LeftGripperState = false;
+	}
+
+	public bool CheckWaitLeftGripperState() {
+		return wait_LeftGripperState;
+	}
+
+	/**************************************************
+	 * Read Left Gripper Pos
+	 **************************************************/
+	public IEnumerator ReadLeftGripperPos() {
+		wait_anything = access_db = wait_LeftGripperPos = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[0] { };
+		Req_sp5_control srvReq = new Req_sp5_control(5, 8, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_LeftGripperPos = false;
+	}
+
+	public bool CheckWaitLeftGripperPos() {
+		return wait_LeftGripperPos;
+	}
+
+	/**************************************************
+	 * Left Gripper Stop
+	 **************************************************/
+	public IEnumerator LeftGripperStop() {
+		wait_anything = access_db = wait_LeftGripperStop = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[0] { };
+		Req_sp5_control srvReq = new Req_sp5_control(5, 5, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_LeftGripperStop = false;
+	}
+
+	public bool CheckWaitLeftGripperStop() {
+		return wait_LeftGripperStop;
+	}
+
+	/**************************************************
+	 * Left Gripper Move
+	 **************************************************/
+	public IEnumerator LeftGripperMove(float theta_rad) {
+		wait_anything = access_db = wait_LeftGripperMove = true;
+		time_access = 0.0f;
+
+		float[] arg = new float[3];
+		arg[0] = theta_rad;
+		arg[1] = 0.2f;
+		arg[2] = 0.2f;
+		Req_sp5_control srvReq = new Req_sp5_control(5, 15, arg);
+		ServiceCaller_sp5_control(srvReq);
+
+		while (access_db) {
+			yield return null;
+		}
+
+		while (success_access || abort_access) {
+			yield return null;
+		}
+
+		wait_anything = wait_LeftGripperMove = false;
+	}
+
+	public bool CheckWaitLeftGripperMove() {
+		return wait_LeftGripperMove;
 	}
 
 }

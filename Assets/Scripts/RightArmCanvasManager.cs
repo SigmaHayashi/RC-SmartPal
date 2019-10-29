@@ -8,6 +8,7 @@ public class RightArmCanvasManager : MonoBehaviour {
 
 	//UIたち
 	private Text RightArm_State_Text;
+	private Text RightArm_Pos_Text;
 
 	private Button RightArm_J1Up_Button;
 	private Button RightArm_J1Down_Button;
@@ -32,6 +33,7 @@ public class RightArmCanvasManager : MonoBehaviour {
 
 	//更新するタイミング用
 	private float time_rightarm_state = 0.0f;
+	private float time_rightarm_pos = 0.0f;
 
 	//どのボタンを押しているか
 	private bool push_j1_up = false;
@@ -52,6 +54,7 @@ public class RightArmCanvasManager : MonoBehaviour {
 	// Start is called before the first frame update
 	void Start() {
 		RightArm_State_Text = GameObject.Find("Main System/Right Arm Canvas/Right Arm State Text").GetComponent<Text>();
+		RightArm_Pos_Text = GameObject.Find("Main System/Right Arm Canvas/Right Arm Pos Text").GetComponent<Text>();
 
 		RightArm_J1Up_Button = GameObject.Find("Main System/Right Arm Canvas/RJ1 up Button").GetComponent<Button>();
 		RightArm_J1Down_Button = GameObject.Find("Main System/Right Arm Canvas/RJ1 down Button").GetComponent<Button>();
@@ -289,6 +292,33 @@ public class RightArmCanvasManager : MonoBehaviour {
 						RightArm_State_Text.text = "State: Unknown State";
 						break;
 				}
+			}
+		}
+
+		time_rightarm_pos += Time.deltaTime;
+		if (!cm.CheckWaitAnything() && time_rightarm_pos > 1.0f) {
+			time_rightarm_pos = 0.0f;
+			IEnumerator coroutine = cm.ReadRightArmPos();
+			StartCoroutine(coroutine);
+		}
+		if (cm.CheckWaitRightArmPos()) {
+			if (cm.CheckAbort()) {
+				cm.FinishAccess();
+			}
+			if (cm.CheckSuccess()) {
+				Res_sp5_control responce = cm.GetResponce();
+				cm.FinishAccess();
+
+				string val_string = "(";
+				foreach (float val in responce.values.val) {
+					val_string += val.ToString("f2") + ", ";
+				}
+				//Debug.Log(val_string.Length);
+				if (val_string.Length > 1) {
+					val_string = val_string.Substring(0, val_string.Length - 2);
+				}
+				val_string += ")";
+				RightArm_Pos_Text.text = "Pos: " + val_string;
 			}
 		}
 	}
