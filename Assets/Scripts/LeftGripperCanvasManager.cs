@@ -184,8 +184,7 @@ public class LeftGripperCanvasManager : MonoBehaviour {
 		while (cm.CheckWaitAnything()) {
 			yield return null;
 		}
-
-		//IEnumerator coroutine = cm.LeftGripperMove(-0.2f);
+		
 		IEnumerator coroutine = cm.LeftGripperMove(mainSystem.GetConfig().left_gripper_home_pos * Mathf.Deg2Rad);
 		StartCoroutine(coroutine);
 

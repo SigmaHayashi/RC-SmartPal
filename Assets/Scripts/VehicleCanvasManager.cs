@@ -200,50 +200,26 @@ public class VehicleCanvasManager : MonoBehaviour {
 				StartCoroutine(coroutine);
 			}
 			else if (push_forward && !push_back && !push_right && !push_left && !push_turnright && !push_turnleft) {
-				//IEnumerator coroutine = SendStop();
-				//StartCoroutine(coroutine);
-				//IEnumerator coroutine2 = SendMove(10, 0, 0);
-				//StartCoroutine(coroutine2);
 				IEnumerator coroutine = SendStopAndMove(10, 0, 0);
 				StartCoroutine(coroutine);
 			}
 			else if (!push_forward && push_back && !push_right && !push_left && !push_turnright && !push_turnleft) {
-				//IEnumerator coroutine = SendStop();
-				//StartCoroutine(coroutine);
-				//IEnumerator coroutine2 = SendMove(-10, 0, 0);
-				//StartCoroutine(coroutine2);
 				IEnumerator coroutine = SendStopAndMove(-10, 0, 0);
 				StartCoroutine(coroutine);
 			}
 			else if (!push_forward && !push_back && push_right && !push_left && !push_turnright && !push_turnleft) {
-				//IEnumerator coroutine = SendStop();
-				//StartCoroutine(coroutine);
-				//IEnumerator coroutine2 = SendMove(0, -10, 0);
-				//StartCoroutine(coroutine2);
 				IEnumerator coroutine = SendStopAndMove(0, -10, 0);
 				StartCoroutine(coroutine);
 			}
 			else if (!push_forward && !push_back && !push_right && push_left && !push_turnright && !push_turnleft) {
-				//IEnumerator coroutine = SendStop();
-				//StartCoroutine(coroutine);
-				//IEnumerator coroutine2 = SendMove(0, 10, 0);
-				//StartCoroutine(coroutine2);
 				IEnumerator coroutine = SendStopAndMove(0, 10, 0);
 				StartCoroutine(coroutine);
 			}
 			else if (!push_forward && !push_back && !push_right && !push_left && push_turnright && !push_turnleft) {
-				//IEnumerator coroutine = SendStop();
-				//StartCoroutine(coroutine);
-				//IEnumerator coroutine2 = SendMove(0, 0, -10);
-				//StartCoroutine(coroutine2);
 				IEnumerator coroutine = SendStopAndMove(0, 0, -10);
 				StartCoroutine(coroutine);
 			}
 			else if (!push_forward && !push_back && !push_right && !push_left && !push_turnright && push_turnleft) {
-				//IEnumerator coroutine = SendStop();
-				//StartCoroutine(coroutine);
-				//IEnumerator coroutine2 = SendMove(0, 0, 10);
-				//StartCoroutine(coroutine2);
 				IEnumerator coroutine = SendStopAndMove(0, 0, 10);
 				StartCoroutine(coroutine);
 			}
@@ -254,67 +230,35 @@ public class VehicleCanvasManager : MonoBehaviour {
 				StartCoroutine(coroutine);
 			}
 			else if (push_forward && !push_back && push_right && !push_left && !push_turnright && !push_turnleft) {
-				//IEnumerator coroutine = SendStop();
-				//StartCoroutine(coroutine);
-				//IEnumerator coroutine2 = SendMove(10, -10, 0);
-				//StartCoroutine(coroutine2);
 				IEnumerator coroutine = SendStopAndMove(10, -10, 0);
 				StartCoroutine(coroutine);
 			}
 			else if (push_forward && !push_back && !push_right && push_left && !push_turnright && !push_turnleft) {
-				//IEnumerator coroutine = SendStop();
-				//StartCoroutine(coroutine);
-				//IEnumerator coroutine2 = SendMove(10, 10, 0);
-				//StartCoroutine(coroutine2);
 				IEnumerator coroutine = SendStopAndMove(10, 10, 0);
 				StartCoroutine(coroutine);
 			}
 			else if (push_forward && !push_back && !push_right && !push_left && push_turnright && !push_turnleft) {
-				//IEnumerator coroutine = SendStop();
-				//StartCoroutine(coroutine);
-				//IEnumerator coroutine2 = SendMove(10, 0, -10);
-				//StartCoroutine(coroutine2);
 				IEnumerator coroutine = SendStopAndMove(10, 0, -10);
 				StartCoroutine(coroutine);
 			}
 			else if (push_forward && !push_back && !push_right && !push_left && !push_turnright && push_turnleft) {
-				//IEnumerator coroutine = SendStop();
-				//StartCoroutine(coroutine);
-				//IEnumerator coroutine2 = SendMove(10, 0, 10);
-				//StartCoroutine(coroutine2);
 				IEnumerator coroutine = SendStopAndMove(10, 0, 10);
 				StartCoroutine(coroutine);
 			}
 
 			else if (!push_forward && push_back && push_right && !push_left && !push_turnright && !push_turnleft) {
-				//IEnumerator coroutine = SendStop();
-				//StartCoroutine(coroutine);
-				//IEnumerator coroutine2 = SendMove(-10, -10, 0);
-				//StartCoroutine(coroutine2);
 				IEnumerator coroutine = SendStopAndMove(-10, -10, 0);
 				StartCoroutine(coroutine);
 			}
 			else if (!push_forward && push_back && !push_right && push_left && !push_turnright && !push_turnleft) {
-				//IEnumerator coroutine = SendStop();
-				//StartCoroutine(coroutine);
-				//IEnumerator coroutine2 = SendMove(-10, 10, 0);
-				//StartCoroutine(coroutine2);
 				IEnumerator coroutine = SendStopAndMove(-10, 10, 0);
 				StartCoroutine(coroutine);
 			}
 			else if (!push_forward && push_back && !push_right && !push_left && push_turnright && !push_turnleft) {
-				//IEnumerator coroutine = SendStop();
-				//StartCoroutine(coroutine);
-				//IEnumerator coroutine2 = SendMove(-10, 0, -10);
-				//StartCoroutine(coroutine2);
 				IEnumerator coroutine = SendStopAndMove(-10, 0, -10);
 				StartCoroutine(coroutine);
 			}
 			else if (!push_forward && push_back && !push_right && !push_left && !push_turnright && push_turnleft) {
-				//IEnumerator coroutine = SendStop();
-				//StartCoroutine(coroutine);
-				//IEnumerator coroutine2 = SendMove(-10, 0, 10);
-				//StartCoroutine(coroutine2);
 				IEnumerator coroutine = SendStopAndMove(-10, 0, 10);
 				StartCoroutine(coroutine);
 			}
@@ -324,35 +268,19 @@ public class VehicleCanvasManager : MonoBehaviour {
 				StartCoroutine(coroutine);
 			}
 			else if (!push_forward && !push_back && push_right && !push_left && push_turnright && !push_turnleft) {
-				//IEnumerator coroutine = SendStop();
-				//StartCoroutine(coroutine);
-				//IEnumerator coroutine2 = SendMove(0, -10, -10);
-				//StartCoroutine(coroutine2);
 				IEnumerator coroutine = SendStopAndMove(0, -10, -10);
 				StartCoroutine(coroutine);
 			}
 			else if (!push_forward && !push_back && push_right && !push_left && !push_turnright && push_turnleft) {
-				//IEnumerator coroutine = SendStop();
-				//StartCoroutine(coroutine);
-				//IEnumerator coroutine2 = SendMove(0, -10, 10);
-				//StartCoroutine(coroutine2);
 				IEnumerator coroutine = SendStopAndMove(0, -10, 10);
 				StartCoroutine(coroutine);
 			}
 
 			else if (!push_forward && !push_back && !push_right && push_left && push_turnright && !push_turnleft) {
-				//IEnumerator coroutine = SendStop();
-				//StartCoroutine(coroutine);
-				//IEnumerator coroutine2 = SendMove(0, 10, -10);
-				//StartCoroutine(coroutine2);
 				IEnumerator coroutine = SendStopAndMove(0, 10, -10);
 				StartCoroutine(coroutine);
 			}
 			else if (!push_forward && !push_back && !push_right && push_left && !push_turnright && push_turnleft) {
-				//IEnumerator coroutine = SendStop();
-				//StartCoroutine(coroutine);
-				//IEnumerator coroutine2 = SendMove(0, 10, 10);
-				//StartCoroutine(coroutine2);
 				IEnumerator coroutine = SendStopAndMove(0, 10, 10);
 				StartCoroutine(coroutine);
 			}
@@ -387,22 +315,6 @@ public class VehicleCanvasManager : MonoBehaviour {
 		}
 	}
 
-	IEnumerator SendMove(float x_m, float y_m, float theta_rad) {
-		while (cm.CheckWaitAnything()) {
-			yield return null;
-		}
-
-		IEnumerator coroutine = cm.VehicleMove(x_m, y_m, theta_rad);
-		StartCoroutine(coroutine);
-
-		while (cm.CheckWaitVehicleMove()) {
-			if (cm.CheckAbort() || cm.CheckSuccess()) {
-				cm.FinishAccess();
-			}
-			yield return null;
-		}
-	}
-
 	IEnumerator SendStopAndMove(float x_m, float y_m, float theta_rad) {
 		IEnumerator coroutine;
 
@@ -423,22 +335,6 @@ public class VehicleCanvasManager : MonoBehaviour {
 
 			yield return new WaitForSeconds(0.5f);
 		}
-
-		/*
-		while (cm.CheckWaitAnything()) {
-			yield return null;
-		}
-
-		IEnumerator coroutine = cm.VehicleStop();
-		StartCoroutine(coroutine);
-
-		while (cm.CheckWaitVehicleStop()) {
-			if (cm.CheckAbort() || cm.CheckSuccess()) {
-				cm.FinishAccess();
-			}
-			yield return null;
-		}
-		*/
 
 		while (cm.CheckWaitAnything()) {
 			yield return null;

@@ -314,7 +314,6 @@ public class LeftArmCanvasManager : MonoBehaviour {
 					float val_tmp = val * Mathf.Rad2Deg;
 					val_string += val_tmp.ToString("f0") + ", ";
 				}
-				//Debug.Log(val_string.Length);
 				if (val_string.Length > 1) {
 					val_string = val_string.Substring(0, val_string.Length - 2);
 				}

@@ -184,8 +184,7 @@ public class RightGripperCanvasManager : MonoBehaviour {
 		while (cm.CheckWaitAnything()) {
 			yield return null;
 		}
-
-		//IEnumerator coroutine = cm.RightGripperMove(-0.2f);
+		
 		IEnumerator coroutine = cm.RightGripperMove(mainSystem.GetConfig().right_gripper_home_pos * Mathf.Deg2Rad);
 		StartCoroutine(coroutine);
 

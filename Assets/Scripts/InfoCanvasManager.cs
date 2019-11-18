@@ -54,14 +54,6 @@ public class InfoCanvasManager : MonoBehaviour {
 	private float time_leftgripper_state = 0.0f;
 	private float time_leftgripper_pos = 0.0f;
 
-	//StateがAlarmかどうか
-	/*
-	private bool alarm_rightarm = false;
-	private bool alarm_leftarm = false;
-	private bool alarm_rightgripper = false;
-	private bool alarm_leftgripper = false;
-	*/
-
 	// Start is called before the first frame update
 	void Start() {
 		//UIを取得
@@ -298,7 +290,6 @@ public class InfoCanvasManager : MonoBehaviour {
 					float val_tmp = val * Mathf.Rad2Deg;
 					val_string += val_tmp.ToString("f0") + ", ";
 				}
-				//Debug.Log(val_string.Length);
 				if (val_string.Length > 1) {
 					val_string = val_string.Substring(0, val_string.Length - 2);
 				}
@@ -426,7 +417,6 @@ public class InfoCanvasManager : MonoBehaviour {
 					float val_tmp = val * Mathf.Rad2Deg;
 					val_string += val_tmp.ToString("f0") + ", ";
 				}
-				//Debug.Log(val_string.Length);
 				if (val_string.Length > 1) {
 					val_string = val_string.Substring(0, val_string.Length - 2);
 				}

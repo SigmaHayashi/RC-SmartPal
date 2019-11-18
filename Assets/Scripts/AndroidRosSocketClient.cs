@@ -212,8 +212,6 @@ public class AndroidRosSocketClient : MonoBehaviour {
 	private string receiveJson, topicJson, srvResJson, srvReqJson;
 	private List<string[]> namesService, namesPubTopic, namesSubTopic;
 
-	//private Console console;
-
 	private MainScript mainSystem;
 	private bool finish_set_address = false;
 
@@ -225,13 +223,9 @@ public class AndroidRosSocketClient : MonoBehaviour {
 		namesService = new List<string[]>();
 		namesPubTopic = new List<string[]>();
 		namesSubTopic = new List<string[]>();
-
-		// connect another PC via websocket
-		//Connect();
 	}
 
 	private void Start() {
-		//console = GameObject.Find("Console Panel").GetComponent<Console>();
 		mainSystem = GameObject.Find("Main System").GetComponent<MainScript>();
 	}
 
@@ -266,31 +260,6 @@ public class AndroidRosSocketClient : MonoBehaviour {
 			}
 		}
 	}
-
-	//*****************************************
-	// function to connect another PC(ROS)
-	// can connect Unity and UWP environment
-	/*
-	public AndroidRosSocketClient() {
-		ws = new WebSocket(address);
-		//open message
-		ws.OnOpen += (sender, e) => {
-			Debug.Log("*********** Websocket connected ***********");
-			conneciton_state = wscCONST.STATE_CONNECTED;
-		};
-		//close message
-		ws.OnClose += (sender, e) => {
-			Debug.Log("*********** Websocket disconnected ***********");
-			conneciton_state = wscCONST.STATE_DISCONNECTED;
-		};
-		//error message
-		ws.OnError += (sender, e) => {
-			Debug.Log("Error : " + e.Message);
-			conneciton_state = wscCONST.STATE_ERROR;
-		};
-		OnMessage();
-	}
-	*/
 
 	public void Connect() {
 		if(conneciton_state != wscCONST.STATE_CONNECTED) {
