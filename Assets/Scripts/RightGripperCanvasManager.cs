@@ -6,6 +6,9 @@ using UnityEngine.EventSystems;
 
 public class RightGripperCanvasManager : MonoBehaviour {
 
+	//Main System
+	private MainScript mainSystem;
+
 	//UIたち
 	private Text RightGripper_State_Text;
 	private Text RightGripper_Pos_Text;
@@ -29,6 +32,8 @@ public class RightGripperCanvasManager : MonoBehaviour {
 
 	// Start is called before the first frame update
 	void Start() {
+		mainSystem = GameObject.Find("Main System").GetComponent<MainScript>();
+
 		RightGripper_State_Text = GameObject.Find("Main System/Right Gripper Canvas/Right Gripper State Text").GetComponent<Text>();
 		RightGripper_Pos_Text = GameObject.Find("Main System/Right Gripper Canvas/Right Gripper Pos Text").GetComponent<Text>();
 
@@ -82,7 +87,7 @@ public class RightGripperCanvasManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update() {
 		time_rightgripper_state += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_rightgripper_state > 0.5f) {
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED && !cm.CheckWaitAnything() && time_rightgripper_state > 0.5f) {
 			time_rightgripper_state = 0.0f;
 			IEnumerator coroutine = cm.ReadRightGripperState();
 			StartCoroutine(coroutine);
@@ -110,7 +115,7 @@ public class RightGripperCanvasManager : MonoBehaviour {
 		}
 
 		time_rightgripper_pos += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_rightgripper_pos > 0.5f) {
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED && !cm.CheckWaitAnything() && time_rightgripper_pos > 0.5f) {
 			time_rightgripper_pos = 0.0f;
 			IEnumerator coroutine = cm.ReadRightGripperPos();
 			StartCoroutine(coroutine);
@@ -129,23 +134,27 @@ public class RightGripperCanvasManager : MonoBehaviour {
 	}
 
 	void MakeCommand() {
-		if(!push_open && !push_close) {
-			IEnumerator coroutine = SendStop();
-			StartCoroutine(coroutine);
-		}
-		else if (push_open) {
-			IEnumerator coroutine = SendMove(-1.0f);
-			StartCoroutine(coroutine);
-		}
-		else if (push_close) {
-			IEnumerator coroutine = SendMove(-0.2f);
-			StartCoroutine(coroutine);
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED) {
+			if (!push_open && !push_close) {
+				IEnumerator coroutine = SendStop();
+				StartCoroutine(coroutine);
+			}
+			else if (push_open) {
+				IEnumerator coroutine = SendMove(-1.0f);
+				StartCoroutine(coroutine);
+			}
+			else if (push_close) {
+				IEnumerator coroutine = SendMove(-0.2f);
+				StartCoroutine(coroutine);
+			}
 		}
 	}
 
 	void PushStop() {
-		IEnumerator coroutine = SendStop();
-		StartCoroutine(coroutine);
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED) {
+			IEnumerator coroutine = SendStop();
+			StartCoroutine(coroutine);
+		}
 	}
 
 	IEnumerator SendStop() {
@@ -165,8 +174,10 @@ public class RightGripperCanvasManager : MonoBehaviour {
 	}
 
 	void PushReset() {
-		IEnumerator coroutine = SendReset();
-		StartCoroutine(coroutine);
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED) {
+			IEnumerator coroutine = SendReset();
+			StartCoroutine(coroutine);
+		}
 	}
 
 	IEnumerator SendReset() {
@@ -174,7 +185,8 @@ public class RightGripperCanvasManager : MonoBehaviour {
 			yield return null;
 		}
 
-		IEnumerator coroutine = cm.RightGripperMove(-0.2f);
+		//IEnumerator coroutine = cm.RightGripperMove(-0.2f);
+		IEnumerator coroutine = cm.RightGripperMove(mainSystem.GetConfig().right_gripper_home_pos * Mathf.Deg2Rad);
 		StartCoroutine(coroutine);
 
 		while (cm.CheckWaitRightGripperMove()) {

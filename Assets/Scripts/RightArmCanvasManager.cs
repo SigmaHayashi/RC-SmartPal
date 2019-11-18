@@ -250,7 +250,7 @@ public class RightArmCanvasManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update() {
 		time_rightarm_state += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_rightarm_state > 0.5f) {
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED && !cm.CheckWaitAnything() && time_rightarm_state > 0.5f) {
 			time_rightarm_state = 0.0f;
 			IEnumerator coroutine = cm.ReadRightArmState();
 			StartCoroutine(coroutine);
@@ -296,7 +296,7 @@ public class RightArmCanvasManager : MonoBehaviour {
 		}
 
 		time_rightarm_pos += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_rightarm_pos > 1.0f) {
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED && !cm.CheckWaitAnything() && time_rightarm_pos > 1.0f) {
 			time_rightarm_pos = 0.0f;
 			IEnumerator coroutine = cm.ReadRightArmPos();
 			StartCoroutine(coroutine);
@@ -325,84 +325,88 @@ public class RightArmCanvasManager : MonoBehaviour {
 	}
 
 	void MakeCommand() {
-		if(!push_j1_up && !push_j1_down) {
-			if(!push_j2_up && !push_j2_down) {
-				if (!push_j3_up && !push_j3_down) {
-					if (!push_j4_up && !push_j4_down) {
-						if (!push_j5_up && !push_j5_down) {
-							if (!push_j6_up && !push_j6_down) {
-								if (!push_j7_up && !push_j7_down) {
-									IEnumerator coroutine = SendStop();
-									StartCoroutine(coroutine);
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED) {
+			if (!push_j1_up && !push_j1_down) {
+				if (!push_j2_up && !push_j2_down) {
+					if (!push_j3_up && !push_j3_down) {
+						if (!push_j4_up && !push_j4_down) {
+							if (!push_j5_up && !push_j5_down) {
+								if (!push_j6_up && !push_j6_down) {
+									if (!push_j7_up && !push_j7_down) {
+										IEnumerator coroutine = SendStop();
+										StartCoroutine(coroutine);
+									}
 								}
 							}
 						}
 					}
 				}
 			}
-		}
 
-		if (push_j1_up) {
-			IEnumerator coroutine = SendMove(new float[7] { 5, 0, 0, 0, 0, 0, 0 });
-			StartCoroutine(coroutine);
-		}
-		else if (push_j1_down) {
-			IEnumerator coroutine = SendMove(new float[7] { -5, 0, 0, 0, 0, 0, 0 });
-			StartCoroutine(coroutine);
-		}
-		else if (push_j2_up) {
-			IEnumerator coroutine = SendMove(new float[7] { 0, 5, 0, 0, 0, 0, 0 });
-			StartCoroutine(coroutine);
-		}
-		else if (push_j2_down) {
-			IEnumerator coroutine = SendMove(new float[7] { 0, -5, 0, 0, 0, 0, 0 });
-			StartCoroutine(coroutine);
-		}
-		else if (push_j3_up) {
-			IEnumerator coroutine = SendMove(new float[7] { 0, 0, 5, 0, 0, 0, 0 });
-			StartCoroutine(coroutine);
-		}
-		else if (push_j3_down) {
-			IEnumerator coroutine = SendMove(new float[7] { 0, 0, -5, 0, 0, 0, 0 });
-			StartCoroutine(coroutine);
-		}
-		else if (push_j4_up) {
-			IEnumerator coroutine = SendMove(new float[7] { 0, 0, 0, 5, 0, 0, 0 });
-			StartCoroutine(coroutine);
-		}
-		else if (push_j4_down) {
-			IEnumerator coroutine = SendMove(new float[7] { 0, 0, 0, -5, 0, 0, 0 });
-			StartCoroutine(coroutine);
-		}
-		else if (push_j5_up) {
-			IEnumerator coroutine = SendMove(new float[7] { 0, 0, 0, 0, 5, 0, 0 });
-			StartCoroutine(coroutine);
-		}
-		else if (push_j5_down) {
-			IEnumerator coroutine = SendMove(new float[7] { 0, 0, 0, 0, -5, 0, 0 });
-			StartCoroutine(coroutine);
-		}
-		else if (push_j6_up) {
-			IEnumerator coroutine = SendMove(new float[7] { 0, 0, 0, 0, 0, 5, 0 });
-			StartCoroutine(coroutine);
-		}
-		else if (push_j6_down) {
-			IEnumerator coroutine = SendMove(new float[7] { 0, 0, 0, 0, 0, -5, 0 });
-			StartCoroutine(coroutine);
-		}
-		else if (push_j7_up) {
-			IEnumerator coroutine = SendMove(new float[7] { 0, 0, 0, 0, 0, 0, 5 });
-			StartCoroutine(coroutine);
-		}
-		else if (push_j7_down) {
-			IEnumerator coroutine = SendMove(new float[7] { 0, 0, 0, 0, 0, 0, -5 });
-			StartCoroutine(coroutine);
+			if (push_j1_up) {
+				IEnumerator coroutine = SendMove(new float[7] { 5, 0, 0, 0, 0, 0, 0 });
+				StartCoroutine(coroutine);
+			}
+			else if (push_j1_down) {
+				IEnumerator coroutine = SendMove(new float[7] { -5, 0, 0, 0, 0, 0, 0 });
+				StartCoroutine(coroutine);
+			}
+			else if (push_j2_up) {
+				IEnumerator coroutine = SendMove(new float[7] { 0, 5, 0, 0, 0, 0, 0 });
+				StartCoroutine(coroutine);
+			}
+			else if (push_j2_down) {
+				IEnumerator coroutine = SendMove(new float[7] { 0, -5, 0, 0, 0, 0, 0 });
+				StartCoroutine(coroutine);
+			}
+			else if (push_j3_up) {
+				IEnumerator coroutine = SendMove(new float[7] { 0, 0, 5, 0, 0, 0, 0 });
+				StartCoroutine(coroutine);
+			}
+			else if (push_j3_down) {
+				IEnumerator coroutine = SendMove(new float[7] { 0, 0, -5, 0, 0, 0, 0 });
+				StartCoroutine(coroutine);
+			}
+			else if (push_j4_up) {
+				IEnumerator coroutine = SendMove(new float[7] { 0, 0, 0, 5, 0, 0, 0 });
+				StartCoroutine(coroutine);
+			}
+			else if (push_j4_down) {
+				IEnumerator coroutine = SendMove(new float[7] { 0, 0, 0, -5, 0, 0, 0 });
+				StartCoroutine(coroutine);
+			}
+			else if (push_j5_up) {
+				IEnumerator coroutine = SendMove(new float[7] { 0, 0, 0, 0, 5, 0, 0 });
+				StartCoroutine(coroutine);
+			}
+			else if (push_j5_down) {
+				IEnumerator coroutine = SendMove(new float[7] { 0, 0, 0, 0, -5, 0, 0 });
+				StartCoroutine(coroutine);
+			}
+			else if (push_j6_up) {
+				IEnumerator coroutine = SendMove(new float[7] { 0, 0, 0, 0, 0, 5, 0 });
+				StartCoroutine(coroutine);
+			}
+			else if (push_j6_down) {
+				IEnumerator coroutine = SendMove(new float[7] { 0, 0, 0, 0, 0, -5, 0 });
+				StartCoroutine(coroutine);
+			}
+			else if (push_j7_up) {
+				IEnumerator coroutine = SendMove(new float[7] { 0, 0, 0, 0, 0, 0, 5 });
+				StartCoroutine(coroutine);
+			}
+			else if (push_j7_down) {
+				IEnumerator coroutine = SendMove(new float[7] { 0, 0, 0, 0, 0, 0, -5 });
+				StartCoroutine(coroutine);
+			}
 		}
 	}
 
 	void PushStop() {
-		IEnumerator coroutine = SendStop();
-		StartCoroutine(coroutine);
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED) {
+			IEnumerator coroutine = SendStop();
+			StartCoroutine(coroutine);
+		}
 	}
 
 	IEnumerator SendStop() {
@@ -422,8 +426,10 @@ public class RightArmCanvasManager : MonoBehaviour {
 	}
 
 	void PushReset() {
-		IEnumerator coroutine = SendReset();
-		StartCoroutine(coroutine);
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED) {
+			IEnumerator coroutine = SendReset();
+			StartCoroutine(coroutine);
+		}
 	}
 
 	IEnumerator SendReset() {

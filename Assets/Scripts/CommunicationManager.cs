@@ -48,6 +48,8 @@ public class CommunicationManager : MonoBehaviour {
 		wsc.SendOpMsg(call);
 	}
 
+	private MainScript mainSystem;
+
 	private AndroidRosSocketClient wsc;
 	private string srvRes;
 	private Res_sp5_control responce;
@@ -95,12 +97,17 @@ public class CommunicationManager : MonoBehaviour {
 
 	// Start is called before the first frame update
 	void Start() {
+		mainSystem = GameObject.Find("Main System").GetComponent<MainScript>();
 		wsc = GameObject.Find("Android Ros Socket Client").GetComponent<AndroidRosSocketClient>();
 	}
 
 
 	// Update is called once per frame
 	void Update() {
+		if (!mainSystem.IsFinishReadConfig()) {
+			return;
+		}
+
 		if (wsc.conneciton_state == wscCONST.STATE_DISCONNECTED) { //切断時
 			time_access += Time.deltaTime;
 			if (time_access > 5.0f) {
@@ -208,6 +215,10 @@ public class CommunicationManager : MonoBehaviour {
 		}
 	}
 
+
+	public int wscConnectionState() {
+		return wsc.conneciton_state;
+	}
 	
 	/**************************************************
 	 * ROSからの返答待ち
@@ -508,6 +519,7 @@ public class CommunicationManager : MonoBehaviour {
 		time_access = 0.0f;
 
 		float[] arg = new float[8];
+		/*
 		arg[0] = 0;
 		arg[1] = -0.1f;
 		arg[2] = 0;
@@ -516,6 +528,15 @@ public class CommunicationManager : MonoBehaviour {
 		arg[5] = 0;
 		arg[6] = 0;
 		arg[7] = 0.2f;
+		*/
+		arg[0] = mainSystem.GetConfig().right_arm_home_pos[0] * Mathf.Deg2Rad;
+		arg[1] = mainSystem.GetConfig().right_arm_home_pos[1] * Mathf.Deg2Rad;
+		arg[2] = mainSystem.GetConfig().right_arm_home_pos[2] * Mathf.Deg2Rad;
+		arg[3] = mainSystem.GetConfig().right_arm_home_pos[3] * Mathf.Deg2Rad;
+		arg[4] = mainSystem.GetConfig().right_arm_home_pos[4] * Mathf.Deg2Rad;
+		arg[5] = mainSystem.GetConfig().right_arm_home_pos[5] * Mathf.Deg2Rad;
+		arg[6] = mainSystem.GetConfig().right_arm_home_pos[6] * Mathf.Deg2Rad;
+		arg[7] = mainSystem.GetConfig().right_arm_move_speed * Mathf.Deg2Rad;
 		string msg = "";
 		foreach (float n in arg) {
 			msg += n.ToString() + ", ";
@@ -555,7 +576,8 @@ public class CommunicationManager : MonoBehaviour {
 		arg[4] = theta_rad[4];
 		arg[5] = theta_rad[5];
 		arg[6] = theta_rad[6];
-		arg[7] = 0.2f;
+		//arg[7] = 0.2f;
+		arg[7] = mainSystem.GetConfig().right_arm_move_speed * Mathf.Deg2Rad;
 		string msg = "";
 		foreach (float n in arg) {
 			msg += n.ToString() + ", ";
@@ -744,6 +766,7 @@ public class CommunicationManager : MonoBehaviour {
 		time_access = 0.0f;
 
 		float[] arg = new float[8];
+		/*
 		arg[0] = 0;
 		arg[1] = -0.1f;
 		arg[2] = 0;
@@ -752,6 +775,15 @@ public class CommunicationManager : MonoBehaviour {
 		arg[5] = 0;
 		arg[6] = 0;
 		arg[7] = 0.2f;
+		*/
+		arg[0] = mainSystem.GetConfig().left_arm_home_pos[0] * Mathf.Deg2Rad;
+		arg[1] = mainSystem.GetConfig().left_arm_home_pos[1] * Mathf.Deg2Rad;
+		arg[2] = mainSystem.GetConfig().left_arm_home_pos[2] * Mathf.Deg2Rad;
+		arg[3] = mainSystem.GetConfig().left_arm_home_pos[3] * Mathf.Deg2Rad;
+		arg[4] = mainSystem.GetConfig().left_arm_home_pos[4] * Mathf.Deg2Rad;
+		arg[5] = mainSystem.GetConfig().left_arm_home_pos[5] * Mathf.Deg2Rad;
+		arg[6] = mainSystem.GetConfig().left_arm_home_pos[6] * Mathf.Deg2Rad;
+		arg[7] = mainSystem.GetConfig().left_arm_move_speed * Mathf.Deg2Rad;
 		string msg = "";
 		foreach (float n in arg) {
 			msg += n.ToString() + ", ";
@@ -791,7 +823,8 @@ public class CommunicationManager : MonoBehaviour {
 		arg[4] = theta_rad[4];
 		arg[5] = theta_rad[5];
 		arg[6] = theta_rad[6];
-		arg[7] = 0.2f;
+		//arg[7] = 0.2f;
+		arg[7] = mainSystem.GetConfig().left_arm_move_speed * Mathf.Deg2Rad;
 		string msg = "";
 		foreach (float n in arg) {
 			msg += n.ToString() + ", ";
@@ -929,8 +962,10 @@ public class CommunicationManager : MonoBehaviour {
 
 		float[] arg = new float[3];
 		arg[0] = theta_rad;
-		arg[1] = 0.2f;
-		arg[2] = 0.2f;
+		//arg[1] = 0.2f;
+		//arg[2] = 0.2f;
+		arg[1] = mainSystem.GetConfig().right_gripper_move_speed * Mathf.Deg2Rad;
+		arg[2] = mainSystem.GetConfig().right_gripper_move_speed * Mathf.Deg2Rad;
 		Req_sp5_control srvReq = new Req_sp5_control(4, 15, arg);
 		ServiceCaller_sp5_control(srvReq);
 
@@ -1036,8 +1071,10 @@ public class CommunicationManager : MonoBehaviour {
 
 		float[] arg = new float[3];
 		arg[0] = theta_rad;
-		arg[1] = 0.2f;
-		arg[2] = 0.2f;
+		//arg[1] = 0.2f;
+		//arg[2] = 0.2f;
+		arg[1] = mainSystem.GetConfig().left_gripper_move_speed * Mathf.Deg2Rad;
+		arg[2] = mainSystem.GetConfig().left_gripper_move_speed * Mathf.Deg2Rad;
 		Req_sp5_control srvReq = new Req_sp5_control(5, 15, arg);
 		ServiceCaller_sp5_control(srvReq);
 

@@ -136,7 +136,7 @@ public class VehicleCanvasManager : MonoBehaviour {
 	void Update() {
 		//Vehicle周りの情報取得
 		time_vehicle_state += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_vehicle_state > 0.5f) {
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED && !cm.CheckWaitAnything() && time_vehicle_state > 0.5f) {
 			time_vehicle_state = 0.0f;
 			IEnumerator coroutine = cm.ReadVehicleState();
 			StartCoroutine(coroutine);
@@ -193,178 +193,182 @@ public class VehicleCanvasManager : MonoBehaviour {
 	}
 
 	void MakeCommand() {
-		//単押し
-		if(!push_forward && !push_back && !push_right && !push_left && !push_turnright && !push_turnleft) {
-			IEnumerator coroutine = SendStop();
-			StartCoroutine(coroutine);
-		}
-		else if (push_forward && !push_back && !push_right && !push_left && !push_turnright && !push_turnleft) {
-			//IEnumerator coroutine = SendStop();
-			//StartCoroutine(coroutine);
-			//IEnumerator coroutine2 = SendMove(10, 0, 0);
-			//StartCoroutine(coroutine2);
-			IEnumerator coroutine = SendStopAndMove(10, 0, 0);
-			StartCoroutine(coroutine);
-		}
-		else if (!push_forward && push_back && !push_right && !push_left && !push_turnright && !push_turnleft) {
-			//IEnumerator coroutine = SendStop();
-			//StartCoroutine(coroutine);
-			//IEnumerator coroutine2 = SendMove(-10, 0, 0);
-			//StartCoroutine(coroutine2);
-			IEnumerator coroutine = SendStopAndMove(-10, 0, 0);
-			StartCoroutine(coroutine);
-		}
-		else if (!push_forward && !push_back && push_right && !push_left && !push_turnright && !push_turnleft) {
-			//IEnumerator coroutine = SendStop();
-			//StartCoroutine(coroutine);
-			//IEnumerator coroutine2 = SendMove(0, -10, 0);
-			//StartCoroutine(coroutine2);
-			IEnumerator coroutine = SendStopAndMove(0, -10, 0);
-			StartCoroutine(coroutine);
-		}
-		else if (!push_forward && !push_back && !push_right && push_left && !push_turnright && !push_turnleft) {
-			//IEnumerator coroutine = SendStop();
-			//StartCoroutine(coroutine);
-			//IEnumerator coroutine2 = SendMove(0, 10, 0);
-			//StartCoroutine(coroutine2);
-			IEnumerator coroutine = SendStopAndMove(0, 10, 0);
-			StartCoroutine(coroutine);
-		}
-		else if (!push_forward && !push_back && !push_right && !push_left && push_turnright && !push_turnleft) {
-			//IEnumerator coroutine = SendStop();
-			//StartCoroutine(coroutine);
-			//IEnumerator coroutine2 = SendMove(0, 0, -10);
-			//StartCoroutine(coroutine2);
-			IEnumerator coroutine = SendStopAndMove(0, 0, -10);
-			StartCoroutine(coroutine);
-		}
-		else if (!push_forward && !push_back && !push_right && !push_left && !push_turnright && push_turnleft) {
-			//IEnumerator coroutine = SendStop();
-			//StartCoroutine(coroutine);
-			//IEnumerator coroutine2 = SendMove(0, 0, 10);
-			//StartCoroutine(coroutine2);
-			IEnumerator coroutine = SendStopAndMove(0, 0, 10);
-			StartCoroutine(coroutine);
-		}
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED) {
+			//単押し
+			if (!push_forward && !push_back && !push_right && !push_left && !push_turnright && !push_turnleft) {
+				IEnumerator coroutine = SendStop();
+				StartCoroutine(coroutine);
+			}
+			else if (push_forward && !push_back && !push_right && !push_left && !push_turnright && !push_turnleft) {
+				//IEnumerator coroutine = SendStop();
+				//StartCoroutine(coroutine);
+				//IEnumerator coroutine2 = SendMove(10, 0, 0);
+				//StartCoroutine(coroutine2);
+				IEnumerator coroutine = SendStopAndMove(10, 0, 0);
+				StartCoroutine(coroutine);
+			}
+			else if (!push_forward && push_back && !push_right && !push_left && !push_turnright && !push_turnleft) {
+				//IEnumerator coroutine = SendStop();
+				//StartCoroutine(coroutine);
+				//IEnumerator coroutine2 = SendMove(-10, 0, 0);
+				//StartCoroutine(coroutine2);
+				IEnumerator coroutine = SendStopAndMove(-10, 0, 0);
+				StartCoroutine(coroutine);
+			}
+			else if (!push_forward && !push_back && push_right && !push_left && !push_turnright && !push_turnleft) {
+				//IEnumerator coroutine = SendStop();
+				//StartCoroutine(coroutine);
+				//IEnumerator coroutine2 = SendMove(0, -10, 0);
+				//StartCoroutine(coroutine2);
+				IEnumerator coroutine = SendStopAndMove(0, -10, 0);
+				StartCoroutine(coroutine);
+			}
+			else if (!push_forward && !push_back && !push_right && push_left && !push_turnright && !push_turnleft) {
+				//IEnumerator coroutine = SendStop();
+				//StartCoroutine(coroutine);
+				//IEnumerator coroutine2 = SendMove(0, 10, 0);
+				//StartCoroutine(coroutine2);
+				IEnumerator coroutine = SendStopAndMove(0, 10, 0);
+				StartCoroutine(coroutine);
+			}
+			else if (!push_forward && !push_back && !push_right && !push_left && push_turnright && !push_turnleft) {
+				//IEnumerator coroutine = SendStop();
+				//StartCoroutine(coroutine);
+				//IEnumerator coroutine2 = SendMove(0, 0, -10);
+				//StartCoroutine(coroutine2);
+				IEnumerator coroutine = SendStopAndMove(0, 0, -10);
+				StartCoroutine(coroutine);
+			}
+			else if (!push_forward && !push_back && !push_right && !push_left && !push_turnright && push_turnleft) {
+				//IEnumerator coroutine = SendStop();
+				//StartCoroutine(coroutine);
+				//IEnumerator coroutine2 = SendMove(0, 0, 10);
+				//StartCoroutine(coroutine2);
+				IEnumerator coroutine = SendStopAndMove(0, 0, 10);
+				StartCoroutine(coroutine);
+			}
 
-		//2個押し
-		else if (push_forward && push_back && !push_right && !push_left && !push_turnright && !push_turnleft) {
-			IEnumerator coroutine = SendStop();
-			StartCoroutine(coroutine);
-		}
-		else if (push_forward && !push_back && push_right && !push_left && !push_turnright && !push_turnleft) {
-			//IEnumerator coroutine = SendStop();
-			//StartCoroutine(coroutine);
-			//IEnumerator coroutine2 = SendMove(10, -10, 0);
-			//StartCoroutine(coroutine2);
-			IEnumerator coroutine = SendStopAndMove(10, -10, 0);
-			StartCoroutine(coroutine);
-		}
-		else if (push_forward && !push_back && !push_right && push_left && !push_turnright && !push_turnleft) {
-			//IEnumerator coroutine = SendStop();
-			//StartCoroutine(coroutine);
-			//IEnumerator coroutine2 = SendMove(10, 10, 0);
-			//StartCoroutine(coroutine2);
-			IEnumerator coroutine = SendStopAndMove(10, 10, 0);
-			StartCoroutine(coroutine);
-		}
-		else if (push_forward && !push_back && !push_right && !push_left && push_turnright && !push_turnleft) {
-			//IEnumerator coroutine = SendStop();
-			//StartCoroutine(coroutine);
-			//IEnumerator coroutine2 = SendMove(10, 0, -10);
-			//StartCoroutine(coroutine2);
-			IEnumerator coroutine = SendStopAndMove(10, 0, -10);
-			StartCoroutine(coroutine);
-		}
-		else if (push_forward && !push_back && !push_right && !push_left && !push_turnright && push_turnleft) {
-			//IEnumerator coroutine = SendStop();
-			//StartCoroutine(coroutine);
-			//IEnumerator coroutine2 = SendMove(10, 0, 10);
-			//StartCoroutine(coroutine2);
-			IEnumerator coroutine = SendStopAndMove(10, 0, 10);
-			StartCoroutine(coroutine);
-		}
+			//2個押し
+			else if (push_forward && push_back && !push_right && !push_left && !push_turnright && !push_turnleft) {
+				IEnumerator coroutine = SendStop();
+				StartCoroutine(coroutine);
+			}
+			else if (push_forward && !push_back && push_right && !push_left && !push_turnright && !push_turnleft) {
+				//IEnumerator coroutine = SendStop();
+				//StartCoroutine(coroutine);
+				//IEnumerator coroutine2 = SendMove(10, -10, 0);
+				//StartCoroutine(coroutine2);
+				IEnumerator coroutine = SendStopAndMove(10, -10, 0);
+				StartCoroutine(coroutine);
+			}
+			else if (push_forward && !push_back && !push_right && push_left && !push_turnright && !push_turnleft) {
+				//IEnumerator coroutine = SendStop();
+				//StartCoroutine(coroutine);
+				//IEnumerator coroutine2 = SendMove(10, 10, 0);
+				//StartCoroutine(coroutine2);
+				IEnumerator coroutine = SendStopAndMove(10, 10, 0);
+				StartCoroutine(coroutine);
+			}
+			else if (push_forward && !push_back && !push_right && !push_left && push_turnright && !push_turnleft) {
+				//IEnumerator coroutine = SendStop();
+				//StartCoroutine(coroutine);
+				//IEnumerator coroutine2 = SendMove(10, 0, -10);
+				//StartCoroutine(coroutine2);
+				IEnumerator coroutine = SendStopAndMove(10, 0, -10);
+				StartCoroutine(coroutine);
+			}
+			else if (push_forward && !push_back && !push_right && !push_left && !push_turnright && push_turnleft) {
+				//IEnumerator coroutine = SendStop();
+				//StartCoroutine(coroutine);
+				//IEnumerator coroutine2 = SendMove(10, 0, 10);
+				//StartCoroutine(coroutine2);
+				IEnumerator coroutine = SendStopAndMove(10, 0, 10);
+				StartCoroutine(coroutine);
+			}
 
-		else if (!push_forward && push_back && push_right && !push_left && !push_turnright && !push_turnleft) {
-			//IEnumerator coroutine = SendStop();
-			//StartCoroutine(coroutine);
-			//IEnumerator coroutine2 = SendMove(-10, -10, 0);
-			//StartCoroutine(coroutine2);
-			IEnumerator coroutine = SendStopAndMove(-10, -10, 0);
-			StartCoroutine(coroutine);
-		}
-		else if (!push_forward && push_back && !push_right && push_left && !push_turnright && !push_turnleft) {
-			//IEnumerator coroutine = SendStop();
-			//StartCoroutine(coroutine);
-			//IEnumerator coroutine2 = SendMove(-10, 10, 0);
-			//StartCoroutine(coroutine2);
-			IEnumerator coroutine = SendStopAndMove(-10, 10, 0);
-			StartCoroutine(coroutine);
-		}
-		else if (!push_forward && push_back && !push_right && !push_left && push_turnright && !push_turnleft) {
-			//IEnumerator coroutine = SendStop();
-			//StartCoroutine(coroutine);
-			//IEnumerator coroutine2 = SendMove(-10, 0, -10);
-			//StartCoroutine(coroutine2);
-			IEnumerator coroutine = SendStopAndMove(-10, 0, -10);
-			StartCoroutine(coroutine);
-		}
-		else if (!push_forward && push_back && !push_right && !push_left && !push_turnright && push_turnleft) {
-			//IEnumerator coroutine = SendStop();
-			//StartCoroutine(coroutine);
-			//IEnumerator coroutine2 = SendMove(-10, 0, 10);
-			//StartCoroutine(coroutine2);
-			IEnumerator coroutine = SendStopAndMove(-10, 0, 10);
-			StartCoroutine(coroutine);
-		}
+			else if (!push_forward && push_back && push_right && !push_left && !push_turnright && !push_turnleft) {
+				//IEnumerator coroutine = SendStop();
+				//StartCoroutine(coroutine);
+				//IEnumerator coroutine2 = SendMove(-10, -10, 0);
+				//StartCoroutine(coroutine2);
+				IEnumerator coroutine = SendStopAndMove(-10, -10, 0);
+				StartCoroutine(coroutine);
+			}
+			else if (!push_forward && push_back && !push_right && push_left && !push_turnright && !push_turnleft) {
+				//IEnumerator coroutine = SendStop();
+				//StartCoroutine(coroutine);
+				//IEnumerator coroutine2 = SendMove(-10, 10, 0);
+				//StartCoroutine(coroutine2);
+				IEnumerator coroutine = SendStopAndMove(-10, 10, 0);
+				StartCoroutine(coroutine);
+			}
+			else if (!push_forward && push_back && !push_right && !push_left && push_turnright && !push_turnleft) {
+				//IEnumerator coroutine = SendStop();
+				//StartCoroutine(coroutine);
+				//IEnumerator coroutine2 = SendMove(-10, 0, -10);
+				//StartCoroutine(coroutine2);
+				IEnumerator coroutine = SendStopAndMove(-10, 0, -10);
+				StartCoroutine(coroutine);
+			}
+			else if (!push_forward && push_back && !push_right && !push_left && !push_turnright && push_turnleft) {
+				//IEnumerator coroutine = SendStop();
+				//StartCoroutine(coroutine);
+				//IEnumerator coroutine2 = SendMove(-10, 0, 10);
+				//StartCoroutine(coroutine2);
+				IEnumerator coroutine = SendStopAndMove(-10, 0, 10);
+				StartCoroutine(coroutine);
+			}
 
-		else if (!push_forward && !push_back && push_right && push_left && !push_turnright && !push_turnleft) {
-			IEnumerator coroutine = SendStop();
-			StartCoroutine(coroutine);
-		}
-		else if (!push_forward && !push_back && push_right && !push_left && push_turnright && !push_turnleft) {
-			//IEnumerator coroutine = SendStop();
-			//StartCoroutine(coroutine);
-			//IEnumerator coroutine2 = SendMove(0, -10, -10);
-			//StartCoroutine(coroutine2);
-			IEnumerator coroutine = SendStopAndMove(0, -10, -10);
-			StartCoroutine(coroutine);
-		}
-		else if (!push_forward && !push_back && push_right && !push_left && !push_turnright && push_turnleft) {
-			//IEnumerator coroutine = SendStop();
-			//StartCoroutine(coroutine);
-			//IEnumerator coroutine2 = SendMove(0, -10, 10);
-			//StartCoroutine(coroutine2);
-			IEnumerator coroutine = SendStopAndMove(0, -10, 10);
-			StartCoroutine(coroutine);
-		}
+			else if (!push_forward && !push_back && push_right && push_left && !push_turnright && !push_turnleft) {
+				IEnumerator coroutine = SendStop();
+				StartCoroutine(coroutine);
+			}
+			else if (!push_forward && !push_back && push_right && !push_left && push_turnright && !push_turnleft) {
+				//IEnumerator coroutine = SendStop();
+				//StartCoroutine(coroutine);
+				//IEnumerator coroutine2 = SendMove(0, -10, -10);
+				//StartCoroutine(coroutine2);
+				IEnumerator coroutine = SendStopAndMove(0, -10, -10);
+				StartCoroutine(coroutine);
+			}
+			else if (!push_forward && !push_back && push_right && !push_left && !push_turnright && push_turnleft) {
+				//IEnumerator coroutine = SendStop();
+				//StartCoroutine(coroutine);
+				//IEnumerator coroutine2 = SendMove(0, -10, 10);
+				//StartCoroutine(coroutine2);
+				IEnumerator coroutine = SendStopAndMove(0, -10, 10);
+				StartCoroutine(coroutine);
+			}
 
-		else if (!push_forward && !push_back && !push_right && push_left && push_turnright && !push_turnleft) {
-			//IEnumerator coroutine = SendStop();
-			//StartCoroutine(coroutine);
-			//IEnumerator coroutine2 = SendMove(0, 10, -10);
-			//StartCoroutine(coroutine2);
-			IEnumerator coroutine = SendStopAndMove(0, 10, -10);
-			StartCoroutine(coroutine);
-		}
-		else if (!push_forward && !push_back && !push_right && push_left && !push_turnright && push_turnleft) {
-			//IEnumerator coroutine = SendStop();
-			//StartCoroutine(coroutine);
-			//IEnumerator coroutine2 = SendMove(0, 10, 10);
-			//StartCoroutine(coroutine2);
-			IEnumerator coroutine = SendStopAndMove(0, 10, 10);
-			StartCoroutine(coroutine);
-		}
+			else if (!push_forward && !push_back && !push_right && push_left && push_turnright && !push_turnleft) {
+				//IEnumerator coroutine = SendStop();
+				//StartCoroutine(coroutine);
+				//IEnumerator coroutine2 = SendMove(0, 10, -10);
+				//StartCoroutine(coroutine2);
+				IEnumerator coroutine = SendStopAndMove(0, 10, -10);
+				StartCoroutine(coroutine);
+			}
+			else if (!push_forward && !push_back && !push_right && push_left && !push_turnright && push_turnleft) {
+				//IEnumerator coroutine = SendStop();
+				//StartCoroutine(coroutine);
+				//IEnumerator coroutine2 = SendMove(0, 10, 10);
+				//StartCoroutine(coroutine2);
+				IEnumerator coroutine = SendStopAndMove(0, 10, 10);
+				StartCoroutine(coroutine);
+			}
 
-		else if (!push_forward && !push_back && !push_right && !push_left && push_turnright && push_turnleft) {
-			IEnumerator coroutine = SendStop();
-			StartCoroutine(coroutine);
+			else if (!push_forward && !push_back && !push_right && !push_left && push_turnright && push_turnleft) {
+				IEnumerator coroutine = SendStop();
+				StartCoroutine(coroutine);
+			}
 		}
 	}
 
 	void PushStop() {
-		IEnumerator coroutine = SendStop();
-		StartCoroutine(coroutine);
+		if(cm.wscConnectionState() == wscCONST.STATE_CONNECTED) {
+			IEnumerator coroutine = SendStop();
+			StartCoroutine(coroutine);
+		}
 	}
 
 	IEnumerator SendStop() {

@@ -33,7 +33,6 @@ public class InfoCanvasManager : MonoBehaviour {
 
 	//Communication Manager
 	private CommunicationManager cm;
-	private AndroidRosSocketClient wsc;
 
 	//更新するタイミング用
 	private float time_vehicle_state = 0.0f;
@@ -95,12 +94,11 @@ public class InfoCanvasManager : MonoBehaviour {
 
 		//Communication Managerを取得
 		cm = GameObject.Find("Communication Manager").GetComponent<CommunicationManager>();
-		wsc = GameObject.Find("Android Ros Socket Client").GetComponent<AndroidRosSocketClient>();
 	}
 
 	// Update is called once per frame
 	void Update() {
-		switch (wsc.conneciton_state) {
+		switch (cm.wscConnectionState()) {
 			case wscCONST.STATE_CONNECTED:
 				Information_Text.text = "System: Connected";
 				break;
@@ -114,7 +112,7 @@ public class InfoCanvasManager : MonoBehaviour {
 
 		//Vehicle周りの情報取得
 		time_vehicle_state += Time.deltaTime;
-		if(!cm.CheckWaitAnything() && time_vehicle_state > 1.0f) {
+		if(cm.wscConnectionState() == wscCONST.STATE_CONNECTED && !cm.CheckWaitAnything() && time_vehicle_state > 1.0f) {
 			time_vehicle_state = 0.0f;
 			IEnumerator coroutine = cm.ReadVehicleState();
 			StartCoroutine(coroutine);
@@ -163,7 +161,7 @@ public class InfoCanvasManager : MonoBehaviour {
 		}
 
 		time_vehicle_pos += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_vehicle_pos > 1.0f) {
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED && !cm.CheckWaitAnything() && time_vehicle_pos > 1.0f) {
 			time_vehicle_pos = 0.0f;
 			IEnumerator coroutine = cm.ReadVehiclePos();
 			StartCoroutine(coroutine);
@@ -183,7 +181,7 @@ public class InfoCanvasManager : MonoBehaviour {
 
 		//Right Arm周りの情報取得
 		time_rightarm_power += Time.deltaTime;
-		if(!cm.CheckWaitAnything() && time_rightarm_power > 3.0f) {
+		if(cm.wscConnectionState() == wscCONST.STATE_CONNECTED && !cm.CheckWaitAnything() && time_rightarm_power > 3.0f) {
 			time_rightarm_power = 0.0f;
 			IEnumerator coroutine = cm.ReadRightArmPower();
 			StartCoroutine(coroutine);
@@ -206,7 +204,7 @@ public class InfoCanvasManager : MonoBehaviour {
 		}
 
 		time_rightarm_servo += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_rightarm_servo > 3.0f) {
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED && !cm.CheckWaitAnything() && time_rightarm_servo > 3.0f) {
 			time_rightarm_servo = 0.0f;
 			IEnumerator coroutine = cm.ReadRightArmServo();
 			StartCoroutine(coroutine);
@@ -229,7 +227,7 @@ public class InfoCanvasManager : MonoBehaviour {
 		}
 
 		time_rightarm_state += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_rightarm_state > 1.0f) {
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED && !cm.CheckWaitAnything() && time_rightarm_state > 1.0f) {
 			time_rightarm_state = 0.0f;
 			IEnumerator coroutine = cm.ReadRightArmState();
 			StartCoroutine(coroutine);
@@ -282,7 +280,7 @@ public class InfoCanvasManager : MonoBehaviour {
 		}
 
 		time_rightarm_pos += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_rightarm_pos > 1.0f) {
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED && !cm.CheckWaitAnything() && time_rightarm_pos > 1.0f) {
 			time_rightarm_pos = 0.0f;
 			IEnumerator coroutine = cm.ReadRightArmPos();
 			StartCoroutine(coroutine);
@@ -311,7 +309,7 @@ public class InfoCanvasManager : MonoBehaviour {
 
 		//Left Arm周りの情報取得
 		time_leftarm_power += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_leftarm_power > 3.0f) {
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED && !cm.CheckWaitAnything() && time_leftarm_power > 3.0f) {
 			time_leftarm_power = 0.0f;
 			IEnumerator coroutine = cm.ReadLeftArmPower();
 			StartCoroutine(coroutine);
@@ -334,7 +332,7 @@ public class InfoCanvasManager : MonoBehaviour {
 		}
 
 		time_leftarm_servo += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_leftarm_servo > 3.0f) {
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED && !cm.CheckWaitAnything() && time_leftarm_servo > 3.0f) {
 			time_leftarm_servo = 0.0f;
 			IEnumerator coroutine = cm.ReadLeftArmServo();
 			StartCoroutine(coroutine);
@@ -357,7 +355,7 @@ public class InfoCanvasManager : MonoBehaviour {
 		}
 
 		time_leftarm_state += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_leftarm_state > 1.0f) {
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED && !cm.CheckWaitAnything() && time_leftarm_state > 1.0f) {
 			time_leftarm_state = 0.0f;
 			IEnumerator coroutine = cm.ReadLeftArmState();
 			StartCoroutine(coroutine);
@@ -410,7 +408,7 @@ public class InfoCanvasManager : MonoBehaviour {
 		}
 
 		time_leftarm_pos += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_leftarm_pos > 1.0f) {
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED && !cm.CheckWaitAnything() && time_leftarm_pos > 1.0f) {
 			time_leftarm_pos = 0.0f;
 			IEnumerator coroutine = cm.ReadLeftArmPos();
 			StartCoroutine(coroutine);
@@ -439,7 +437,7 @@ public class InfoCanvasManager : MonoBehaviour {
 
 		//Right Gripper周りの情報取得
 		time_rightgripper_state += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_rightgripper_state > 1.0f) {
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED && !cm.CheckWaitAnything() && time_rightgripper_state > 1.0f) {
 			time_rightgripper_state = 0.0f;
 			IEnumerator coroutine = cm.ReadRightGripperState();
 			StartCoroutine(coroutine);
@@ -467,7 +465,7 @@ public class InfoCanvasManager : MonoBehaviour {
 		}
 
 		time_rightgripper_pos += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_rightgripper_pos > 1.0f) {
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED && !cm.CheckWaitAnything() && time_rightgripper_pos > 1.0f) {
 			time_rightgripper_pos = 0.0f;
 			IEnumerator coroutine = cm.ReadRightGripperPos();
 			StartCoroutine(coroutine);
@@ -486,7 +484,7 @@ public class InfoCanvasManager : MonoBehaviour {
 
 		//Left Gripper周りの情報取得
 		time_leftgripper_state += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_leftgripper_state > 1.0f) {
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED && !cm.CheckWaitAnything() && time_leftgripper_state > 1.0f) {
 			time_leftgripper_state = 0.0f;
 			IEnumerator coroutine = cm.ReadLeftGripperState();
 			StartCoroutine(coroutine);
@@ -514,7 +512,7 @@ public class InfoCanvasManager : MonoBehaviour {
 		}
 
 		time_leftgripper_pos += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_leftgripper_pos > 1.0f) {
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED && !cm.CheckWaitAnything() && time_leftgripper_pos > 1.0f) {
 			time_leftgripper_pos = 0.0f;
 			IEnumerator coroutine = cm.ReadLeftGripperPos();
 			StartCoroutine(coroutine);
@@ -536,8 +534,10 @@ public class InfoCanvasManager : MonoBehaviour {
 	 * Clear Alarm Buttonを押したとき
 	 **************************************************/
 	void PushRightArmClearAlarm() {
-		IEnumerator coroutine = SendRightArmClearAlarm();
-		StartCoroutine(coroutine);
+		if(cm.wscConnectionState() == wscCONST.STATE_CONNECTED) {
+			IEnumerator coroutine = SendRightArmClearAlarm();
+			StartCoroutine(coroutine);
+		}
 	}
 
 	IEnumerator SendRightArmClearAlarm() {
@@ -557,8 +557,10 @@ public class InfoCanvasManager : MonoBehaviour {
 	}
 
 	void PushLeftArmClearAlarm() {
-		IEnumerator coroutine = SendLeftArmClearAlarm();
-		StartCoroutine(coroutine);
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED) {
+			IEnumerator coroutine = SendLeftArmClearAlarm();
+			StartCoroutine(coroutine);
+		}
 	}
 
 	IEnumerator SendLeftArmClearAlarm() {

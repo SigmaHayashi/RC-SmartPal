@@ -6,6 +6,9 @@ using UnityEngine.EventSystems;
 
 public class LeftGripperCanvasManager : MonoBehaviour {
 
+	//Main System
+	private MainScript mainSystem;
+
 	//UIたち
 	private Text LeftGripper_State_Text;
 	private Text LeftGripper_Pos_Text;
@@ -29,6 +32,8 @@ public class LeftGripperCanvasManager : MonoBehaviour {
 
 	// Start is called before the first frame update
 	void Start() {
+		mainSystem = GameObject.Find("Main System").GetComponent<MainScript>();
+
 		LeftGripper_State_Text = GameObject.Find("Main System/Left Gripper Canvas/Left Gripper State Text").GetComponent<Text>();
 		LeftGripper_Pos_Text = GameObject.Find("Main System/Left Gripper Canvas/Left Gripper Pos Text").GetComponent<Text>();
 
@@ -82,7 +87,7 @@ public class LeftGripperCanvasManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update() {
 		time_leftgripper_state += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_leftgripper_state > 0.5f) {
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED && !cm.CheckWaitAnything() && time_leftgripper_state > 0.5f) {
 			time_leftgripper_state = 0.0f;
 			IEnumerator coroutine = cm.ReadLeftGripperState();
 			StartCoroutine(coroutine);
@@ -110,7 +115,7 @@ public class LeftGripperCanvasManager : MonoBehaviour {
 		}
 
 		time_leftgripper_pos += Time.deltaTime;
-		if (!cm.CheckWaitAnything() && time_leftgripper_pos > 0.5f) {
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED && !cm.CheckWaitAnything() && time_leftgripper_pos > 0.5f) {
 			time_leftgripper_pos = 0.0f;
 			IEnumerator coroutine = cm.ReadLeftGripperPos();
 			StartCoroutine(coroutine);
@@ -129,23 +134,27 @@ public class LeftGripperCanvasManager : MonoBehaviour {
 	}
 
 	void MakeCommand() {
-		if (!push_open && !push_close) {
-			IEnumerator coroutine = SendStop();
-			StartCoroutine(coroutine);
-		}
-		else if (push_open) {
-			IEnumerator coroutine = SendMove(-1.0f);
-			StartCoroutine(coroutine);
-		}
-		else if (push_close) {
-			IEnumerator coroutine = SendMove(-0.2f);
-			StartCoroutine(coroutine);
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED) {
+			if (!push_open && !push_close) {
+				IEnumerator coroutine = SendStop();
+				StartCoroutine(coroutine);
+			}
+			else if (push_open) {
+				IEnumerator coroutine = SendMove(-1.0f);
+				StartCoroutine(coroutine);
+			}
+			else if (push_close) {
+				IEnumerator coroutine = SendMove(-0.2f);
+				StartCoroutine(coroutine);
+			}
 		}
 	}
 
 	void PushStop() {
-		IEnumerator coroutine = SendStop();
-		StartCoroutine(coroutine);
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED) {
+			IEnumerator coroutine = SendStop();
+			StartCoroutine(coroutine);
+		}
 	}
 
 	IEnumerator SendStop() {
@@ -165,8 +174,10 @@ public class LeftGripperCanvasManager : MonoBehaviour {
 	}
 
 	void PushReset() {
-		IEnumerator coroutine = SendReset();
-		StartCoroutine(coroutine);
+		if (cm.wscConnectionState() == wscCONST.STATE_CONNECTED) {
+			IEnumerator coroutine = SendReset();
+			StartCoroutine(coroutine);
+		}
 	}
 
 	IEnumerator SendReset() {
@@ -174,7 +185,8 @@ public class LeftGripperCanvasManager : MonoBehaviour {
 			yield return null;
 		}
 
-		IEnumerator coroutine = cm.LeftGripperMove(-0.2f);
+		//IEnumerator coroutine = cm.LeftGripperMove(-0.2f);
+		IEnumerator coroutine = cm.LeftGripperMove(mainSystem.GetConfig().left_gripper_home_pos * Mathf.Deg2Rad);
 		StartCoroutine(coroutine);
 
 		while (cm.CheckWaitLeftGripperMove()) {
