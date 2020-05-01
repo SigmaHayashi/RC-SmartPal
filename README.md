@@ -59,7 +59,7 @@ Android（動作確認済み） : Pixel 3 XL, Pixel 4 XL
 
 実行前に，ROSをインストールしたUbuntuでROS-TMS for Smart Previewed Realityをcatkin_makeしておく必要がある．
 
-ROS-TMS for Smart Previewed Reality : https://github.com/SigmaHayashi/ros_tms  
+ROS-TMS for Smart Previewed Reality : https://github.com/SigmaHayashi/ros_tms_for_smart_previewed_reality
 
 このアプリケーションを利用するためには，SmartPal Vが必要である．
 その他依存関係はROS-TMSのWikiを参照．
