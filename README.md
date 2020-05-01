@@ -61,8 +61,8 @@ Android（動作確認済み） : Pixel 3 XL, Pixel 4 XL
 
 ROS-TMS for Smart Previewed Reality : https://github.com/SigmaHayashi/ros_tms  
 
-このアプリケーションをフルに利用するためには，B-sen，SmartPal V，Viconが必要である．
-また，データベースを利用するため，mongodbをインストールする必要がある．その他依存関係はROS-TMSのWikiを参照．
+このアプリケーションを利用するためには，SmartPal Vが必要である．
+その他依存関係はROS-TMSのWikiを参照．
 
 Wiki : https://github.com/irvs/ros_tms/wiki
 
@@ -72,8 +72,6 @@ Wiki : https://github.com/irvs/ros_tms/wiki
 ```
 $ roscore
 $ roslaunch rosbridge_server rosbridge_websocket.launch
-$ rosrun tms_ss_vicon vicon_stream
-$ roslaunch tms_db_manager tms_db_manager.launch
 ```
 
 以下をSmartPal搭載NUCにSSHでアクセスして実行する
